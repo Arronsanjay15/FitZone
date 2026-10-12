@@ -6,6 +6,7 @@ import "./App.css";
 
 import type {
   Category,
+  ChallengeState,
   Exercise,
   FitnessLevel,
   LevelFilter,
@@ -16,12 +17,21 @@ import type {
 } from "./types";
 
 import { exercises, levelOrder } from "./data/exercises";
+import { getChallengeDay } from "./data/challenge";
 import {
   makeId,
   readStorage,
   STORAGE_KEYS,
   writeStorage,
 } from "./lib/storage";
+import {
+  advanceChallenge,
+  CHALLENGE_LENGTH,
+  completeDay,
+  emptyChallenge,
+  nextUnlockAt,
+  normalizeChallenge,
+} from "./lib/challenge";
 
 import { useToast } from "./hooks/useToast";
 
@@ -69,6 +79,16 @@ function App() {
       () => readStorage(STORAGE_KEYS.history, [])
     );
 
+  // 30-day challenge progress
+  const [challenge, setChallenge] = useState<ChallengeState>(() =>
+    normalizeChallenge(readStorage(STORAGE_KEYS.challenge, null))
+  );
+
+  // Which challenge day the open guided session belongs to (if any)
+  const [activeChallengeDay, setActiveChallengeDay] = useState<
+    number | null
+  >(null);
+
   // Workout planner
   const [plannerLevel, setPlannerLevel] =
     useState<FitnessLevel>("Beginner");
@@ -114,6 +134,24 @@ function App() {
   useEffect(() => {
     writeStorage(STORAGE_KEYS.favorites, favorites);
   }, [favorites]);
+
+  // Save 30-day challenge progress
+  useEffect(() => {
+    writeStorage(STORAGE_KEYS.challenge, challenge);
+  }, [challenge]);
+
+  // Unlock the next challenge day once its 24-hour cooldown has elapsed.
+  useEffect(() => {
+    const unlockAt = nextUnlockAt(challenge);
+    if (unlockAt === null) return;
+
+    const delay = Math.max(0, unlockAt - Date.now());
+    const timer = window.setTimeout(() => {
+      setChallenge((previous) => advanceChallenge(previous, Date.now()));
+    }, delay + 50);
+
+    return () => window.clearTimeout(timer);
+  }, [challenge]);
 
   // Rest timer
   useEffect(() => {
@@ -181,12 +219,25 @@ function App() {
     favorites,
   ]);
 
+  // Compact challenge snapshot for the hero
+  const challengeSummary = useMemo(() => {
+    const task = getChallengeDay(challenge.unlockedDay);
+
+    return {
+      day: challenge.unlockedDay,
+      length: CHALLENGE_LENGTH,
+      title: task?.title ?? "",
+      finished: challenge.completedDays.length >= CHALLENGE_LENGTH,
+      nextUnlockAt: nextUnlockAt(challenge),
+    };
+  }, [challenge]);
+
   const currentExercise = session[sessionIndex] ?? null;
 
-  const totalCompletedSets = Object.values(setChecks).reduce(
-    (total, checks) => total + checks.filter(Boolean).length,
-    0
-  );
+  // Return to the hero section whenever the page is refreshed.
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0 });
+  }, []);
 
   // Select or deselect muscle groups
   const toggleMuscle = (group: MuscleGroup) => {
@@ -365,8 +416,11 @@ function App() {
     );
   };
 
-  // Start a guided workout
-  const startWorkout = (workout: Exercise[]) => {
+  // Start a guided workout (optionally as a specific challenge day)
+  const startWorkout = (
+    workout: Exercise[],
+    challengeDay: number | null = null
+  ) => {
     if (workout.length === 0) return;
 
     setSession(workout);
@@ -377,6 +431,7 @@ function App() {
     setSessionFinished(false);
     setSessionOpen(true);
     setSelectedExercise(null);
+    setActiveChallengeDay(challengeDay);
   };
 
   const startVisibleWorkout = () => {
@@ -385,6 +440,13 @@ function App() {
         ? visibleExercises
         : exercises
     );
+  };
+
+  // Launch the workout assigned to a challenge day
+  const startChallengeDay = (day: number) => {
+    const task = getChallengeDay(day);
+    if (!task) return;
+    startWorkout(task.exercises, day);
   };
 
   // Save the completed workout
@@ -413,12 +475,17 @@ function App() {
     setSessionCompletedNames(completedNames);
     setSessionFinished(true);
     setResting(false);
-    notify(
-      `Workout saved — ${completedNames.length} ${
-        completedNames.length === 1 ? "exercise" : "exercises"
-      } logged`,
-      "success"
-    );
+
+    if (activeChallengeDay !== null) {
+      completeChallengeDay(activeChallengeDay);
+    } else {
+      notify(
+        `Workout saved — ${completedNames.length} ${
+          completedNames.length === 1 ? "exercise" : "exercises"
+        } logged`,
+        "success"
+      );
+    }
   };
 
   // Complete the current exercise and move forward
@@ -443,6 +510,7 @@ function App() {
     setResting(false);
     setRestSeconds(REST_SECONDS);
     setSessionFinished(false);
+    setActiveChallengeDay(null);
   };
 
   // Clear workout history
@@ -457,6 +525,44 @@ function App() {
 
     setWorkoutHistory([]);
     notify("Workout history cleared", "info");
+  };
+
+  // Complete the current day of the 30-day challenge
+  const completeChallengeDay = (day: number) => {
+    const alreadyDone = challenge.completedDays.includes(day);
+
+    if (day !== challenge.unlockedDay || alreadyDone) {
+      notify(
+        alreadyDone
+          ? `Day ${day} is already complete.`
+          : "That day is still locked.",
+        "warn"
+      );
+      return;
+    }
+
+    setChallenge((previous) => completeDay(previous, day, Date.now()));
+
+    notify(
+      day >= CHALLENGE_LENGTH
+        ? "Challenge complete — all 30 days done! 🎉"
+        : `Day ${day} complete — day ${day + 1} unlocks in 24 hours`,
+      "success"
+    );
+  };
+
+  // Reset the 30-day challenge
+  const resetChallenge = () => {
+    if (
+      !window.confirm(
+        "Reset your 30-day challenge? All challenge progress will be lost."
+      )
+    ) {
+      return;
+    }
+
+    setChallenge(emptyChallenge());
+    notify("Challenge reset", "info");
   };
 
   // Reusable exercise card
@@ -487,6 +593,7 @@ function App() {
           workoutsLogged={workoutHistory.length}
           focus={selectedWorkoutType}
           onFocusChange={changeWorkoutType}
+          challenge={challengeSummary}
         />
 
         <Planner
@@ -507,9 +614,11 @@ function App() {
 
         <Dashboard
           totalExercises={exercises.length}
-          completedCount={completedExercises.length}
-          workoutsCount={workoutHistory.length}
-          totalSets={totalCompletedSets}
+          challenge={challenge}
+          challengeLength={CHALLENGE_LENGTH}
+          onStartDay={startChallengeDay}
+          onCompleteDay={completeChallengeDay}
+          onResetChallenge={resetChallenge}
           onStartVisible={startVisibleWorkout}
         />
 

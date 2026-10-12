@@ -8,6 +8,7 @@ import {
   ArrowRight,
   CircleCheck,
   Dumbbell,
+  Flame,
   PersonStanding,
   Play,
   Sparkles,
@@ -17,7 +18,7 @@ import {
   type LucideIcon
 } from "lucide-react";
 
-import type { WorkoutType } from "../types";
+import type { ChallengeSummary, WorkoutType } from "../types";
 import { exercises } from "../data/exercises";
 import { AnimatedNumber } from "./AnimatedNumber";
 import { Reveal } from "./Reveal";
@@ -28,6 +29,7 @@ type HeroProps = {
   workoutsLogged: number;
   focus: WorkoutType;
   onFocusChange: (focus: WorkoutType) => void;
+  challenge: ChallengeSummary;
 };
 
 type FocusOption = {
@@ -49,12 +51,21 @@ const focusOptions: FocusOption[] = [
   { id: "Kickboxing", label: "Kickboxing", icon: Swords, blurb: "Sharpen speed & cardio" }
 ];
 
+/** `9:00 AM` style label for the next challenge unlock. */
+function formatClock(timestamp: number): string {
+  return new Date(timestamp).toLocaleTimeString(undefined, {
+    hour: "numeric",
+    minute: "2-digit"
+  });
+}
+
 export function Hero({
   exerciseCount,
   completedCount,
   workoutsLogged,
   focus,
-  onFocusChange
+  onFocusChange,
+  challenge
 }: HeroProps) {
   const sectionRef = useRef<HTMLElement | null>(null);
   const focusGroupRef = useRef<HTMLDivElement | null>(null);
@@ -194,6 +205,29 @@ export function Hero({
           </a>
         </div>
 
+        <div className="hero-challenge">
+          <span className="hero-challenge-icon">
+            <Flame size={16} aria-hidden="true" />
+          </span>
+          <span className="hero-challenge-text">
+            {challenge.finished ? (
+              <>
+                30-day challenge <strong>complete</strong> — legendary work!
+              </>
+            ) : challenge.nextUnlockAt !== null ? (
+              <>
+                Rest up — day {challenge.day + 1} unlocks at{" "}
+                <strong>{formatClock(challenge.nextUnlockAt)}</strong>
+              </>
+            ) : (
+              <>
+                Today&rsquo;s challenge: <strong>{challenge.title}</strong>{" "}
+                (day {challenge.day})
+              </>
+            )}
+          </span>
+        </div>
+
         <div className="hero-stats">
           <div>
             <strong>
@@ -220,6 +254,15 @@ export function Hero({
             <span>
               <Trophy size={13} aria-hidden="true" />
               Workouts logged
+            </span>
+          </div>
+          <div>
+            <strong>
+              <AnimatedNumber value={challenge.day} />
+            </strong>
+            <span>
+              <Flame size={13} aria-hidden="true" />
+              {challenge.length}-day challenge
             </span>
           </div>
         </div>

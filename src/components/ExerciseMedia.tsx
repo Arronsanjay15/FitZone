@@ -1,32 +1,23 @@
-import { useMemo, useState } from "react";
 import { CirclePlay, ImageOff } from "lucide-react";
+
 import type { Exercise } from "../types";
 import { equipmentLabels } from "../data/exercises";
-import {
-  defaultExerciseIcon,
-  equipmentIcons,
-  exerciseIcons
-} from "../lib/icons";
-import { getExerciseVideo } from "../lib/video";
-import { getExerciseImages } from "../lib/images";
+import { equipmentIcons, exerciseIcons } from "../lib/icons";
+import { useExerciseImage } from "../hooks/useExerciseImage";
 
 type ExerciseMediaProps = {
   exercise: Exercise;
   onWatchVideo: () => void;
   variant?: "card" | "detail";
-  /** Hide the built-in "Watch video" button when the host already shows one. */
+  /** Hide the play overlay when the surrounding UI already offers a video CTA. */
   showPlay?: boolean;
 };
 
-type MediaStatus = "loading" | "loaded" | "error";
-
 /**
- * Exercise thumbnail.
- *
- * It prefers a curated demonstration photo from the open Free Exercise DB,
- * then the verified tutorial's YouTube thumbnail, and finally falls back to an
- * equipment icon. A skeleton is shown while the image loads and any broken
- * image is skipped, so a failed request can never leave a card blank or crash.
+ * Resilient demonstration media for an exercise card or detail view. Walks an
+ * ordered list of candidate image URLs (curated photos, then a YouTube
+ * thumbnail) and falls back to a per-exercise icon when every candidate fails,
+ * so a card can never render blank or crash on a broken image.
  */
 export function ExerciseMedia({
   exercise,
@@ -34,31 +25,11 @@ export function ExerciseMedia({
   variant = "card",
   showPlay = true
 }: ExerciseMediaProps) {
-  const Icon = exerciseIcons[exercise.id] ?? defaultExerciseIcon;
+  const { src: imageSrc, status, onLoad, onError } =
+    useExerciseImage(exercise);
+
+  const Icon = exerciseIcons[exercise.id];
   const EquipmentIcon = equipmentIcons[exercise.category];
-
-  // The underlying datasets are static, so `exercise` is a stable reference and
-  // this list is only rebuilt when a different exercise is rendered.
-  const candidates = useMemo(() => {
-    const { thumbnailCandidates } = getExerciseVideo(exercise);
-    return [...getExerciseImages(exercise.id), ...thumbnailCandidates];
-  }, [exercise]);
-
-  const [imageIndex, setImageIndex] = useState(0);
-  const [status, setStatus] = useState<MediaStatus>(
-    candidates.length > 0 ? "loading" : "error"
-  );
-
-  // Reset the media state when a different exercise is rendered. Adjusting the
-  // state during render (rather than in an effect) avoids a cascading re-render.
-  const [shownExercise, setShownExercise] = useState(exercise);
-  if (shownExercise !== exercise) {
-    setShownExercise(exercise);
-    setImageIndex(0);
-    setStatus(candidates.length > 0 ? "loading" : "error");
-  }
-
-  const imageSrc = status === "error" ? null : candidates[imageIndex] ?? null;
   const showImage = imageSrc !== null;
 
   return (
@@ -81,15 +52,8 @@ export function ExerciseMedia({
             referrerPolicy="no-referrer"
             draggable={false}
             className={status === "loaded" ? "is-loaded" : ""}
-            onLoad={() => setStatus("loaded")}
-            onError={() => {
-              if (imageIndex + 1 < candidates.length) {
-                setImageIndex((index) => index + 1);
-                setStatus("loading");
-              } else {
-                setStatus("error");
-              }
-            }}
+            onLoad={onLoad}
+            onError={onError}
           />
         </>
       ) : (
