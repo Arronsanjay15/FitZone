@@ -6,6 +6,9 @@
 
 Build a personalized workout plan, explore a curated library of **48 exercises**, follow step-by-step instructions, watch technique videos, and track your progress — all saved locally in your browser.
 
+### [🚀 Live Demo → fitzonepro-zephyr.vercel.app](https://fitzonepro-zephyr.vercel.app/)
+
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-000000?logo=vercel&logoColor=white)](https://fitzonepro-zephyr.vercel.app/)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)](https://vite.dev/)
@@ -38,6 +41,8 @@ Build a personalized workout plan, explore a curated library of **48 exercises**
 ## 🔎 Overview
 
 FitZone is a single-page React application with **no backend and no account required**. Everything a user does — completed exercises, per-set check-offs, and finished workout sessions — is persisted to `localStorage`, so the app works fully offline after the first load and keeps progress between visits.
+
+> 🔗 **Try it now:** [https://fitzonepro-zephyr.vercel.app/](https://fitzonepro-zephyr.vercel.app/) — deployed on Vercel.
 
 The experience is organized into five anchor-linked sections:
 
