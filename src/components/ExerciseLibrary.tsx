@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from "react";
-import { Funnel, RotateCcw, Search } from "lucide-react";
+import { Funnel, Heart, RotateCcw, Search } from "lucide-react";
 import type { Category, Exercise, LevelFilter, MuscleGroup } from "../types";
+import { Reveal } from "./Reveal";
 import { SectionHeading } from "./SectionHeading";
 import { ExerciseFilters } from "./ExerciseFilters";
 import { EmptyState } from "./EmptyState";
@@ -16,6 +17,9 @@ type ExerciseLibraryProps = {
   onLevelChange: (level: LevelFilter) => void;
   selectedMuscles: MuscleGroup[];
   onToggleMuscle: (group: MuscleGroup) => void;
+  savedOnly: boolean;
+  onToggleSavedOnly: () => void;
+  favoriteCount: number;
   onReset: () => void;
   renderCard: (exercise: Exercise) => ReactNode;
 };
@@ -31,6 +35,9 @@ export function ExerciseLibrary({
   onLevelChange,
   selectedMuscles,
   onToggleMuscle,
+  savedOnly,
+  onToggleSavedOnly,
+  favoriteCount,
   onReset,
   renderCard
 }: ExerciseLibraryProps) {
@@ -40,7 +47,8 @@ export function ExerciseLibrary({
     search.trim() !== "" ||
     category !== "All" ||
     level !== "All" ||
-    selectedMuscles.length > 0;
+    selectedMuscles.length > 0 ||
+    savedOnly;
 
   return (
     <section className="section" id="exercises">
@@ -81,14 +89,31 @@ export function ExerciseLibrary({
             resultCount={visibleExercises.length}
             totalCount={totalCount}
             hasActiveFilters={hasActiveFilters}
+            savedOnly={savedOnly}
+            onToggleSavedOnly={onToggleSavedOnly}
+            favoriteCount={favoriteCount}
           />
         </aside>
 
         <div className="library-results">
           {visibleExercises.length > 0 ? (
-            <div className="exercise-grid">
+            <Reveal variant="stagger" className="exercise-grid">
               {visibleExercises.map(renderCard)}
-            </div>
+            </Reveal>
+          ) : savedOnly && favoriteCount === 0 ? (
+            <EmptyState
+              icon={Heart}
+              title="No saved exercises yet"
+              message="Tap the heart on any exercise to save it here for quick access later."
+            >
+              <button
+                type="button"
+                className="details-button"
+                onClick={onToggleSavedOnly}
+              >
+                Browse all exercises
+              </button>
+            </EmptyState>
           ) : (
             <EmptyState
               icon={Search}

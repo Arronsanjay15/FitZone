@@ -1,4 +1,4 @@
-import { Check, CirclePlay, Eye, Play, Repeat, Target } from "lucide-react";
+import { Check, CirclePlay, Eye, Heart, Play, Repeat, Target } from "lucide-react";
 import type { Exercise, SetChecks } from "../types";
 import { equipmentLabels } from "../data/exercises";
 import { levelIcons } from "../lib/icons";
@@ -7,10 +7,12 @@ import { ExerciseMedia } from "./ExerciseMedia";
 type ExerciseCardProps = {
   exercise: Exercise;
   completed: boolean;
+  favorite: boolean;
   setChecks: SetChecks;
   onDetails: () => void;
   onMarkDone: () => void;
   onToggleSet: (exerciseId: string, setIndex: number) => void;
+  onToggleFavorite: () => void;
   onStart: () => void;
   onWatchVideo: () => void;
 };
@@ -18,10 +20,12 @@ type ExerciseCardProps = {
 export function ExerciseCard({
   exercise,
   completed,
+  favorite,
   setChecks,
   onDetails,
   onMarkDone,
   onToggleSet,
+  onToggleFavorite,
   onStart,
   onWatchVideo
 }: ExerciseCardProps) {
@@ -29,7 +33,11 @@ export function ExerciseCard({
   const LevelIcon = levelIcons[exercise.level];
 
   return (
-    <article className={`exercise-card${completed ? " is-completed" : ""}`}>
+    <article
+      className={`exercise-card${completed ? " is-completed" : ""}${
+        favorite ? " is-favorite" : ""
+      }`}
+    >
       <div className="exercise-card-media">
         <ExerciseMedia exercise={exercise} onWatchVideo={onWatchVideo} />
         {completed ? (
@@ -41,12 +49,29 @@ export function ExerciseCard({
       </div>
 
       <div className="exercise-card-content">
-        <div className="exercise-card-tags">
-          <span className="tag">{equipmentLabels[exercise.category]}</span>
-          <span className={`tag level-${exercise.level.toLowerCase()}`}>
-            <LevelIcon size={12} aria-hidden="true" />
-            {exercise.level}
-          </span>
+        <div className="exercise-card-top">
+          <div className="exercise-card-tags">
+            <span className="tag">{equipmentLabels[exercise.category]}</span>
+            <span className={`tag level-${exercise.level.toLowerCase()}`}>
+              <LevelIcon size={12} aria-hidden="true" />
+              {exercise.level}
+            </span>
+          </div>
+
+          <button
+            type="button"
+            className={`favorite-button${favorite ? " is-favorite" : ""}`}
+            onClick={onToggleFavorite}
+            aria-pressed={favorite}
+            aria-label={
+              favorite
+                ? `Remove ${exercise.name} from saved exercises`
+                : `Save ${exercise.name} for later`
+            }
+            title={favorite ? "Remove from saved" : "Save for later"}
+          >
+            <Heart size={16} aria-hidden="true" fill={favorite ? "currentColor" : "none"} />
+          </button>
         </div>
 
         <h3>{exercise.name}</h3>

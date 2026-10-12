@@ -21,6 +21,9 @@ export type FitnessLevel = "Beginner" | "Intermediate" | "Advanced";
 /** Difficulty filter, including the "All" option. */
 export type LevelFilter = "All" | FitnessLevel;
 
+/** Workout styles offered by the planner and the hero focus selector. */
+export type WorkoutType = Equipment;
+
 export type Exercise = {
   id: string;
   name: string;

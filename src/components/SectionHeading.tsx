@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Reveal } from "./Reveal";
 
 type SectionHeadingProps = {
   label?: string;
@@ -16,13 +17,13 @@ export function SectionHeading({
   as: Heading = "h2"
 }: SectionHeadingProps) {
   return (
-    <div className="section-heading">
+    <Reveal className="section-heading">
       <div>
         {label ? <p className="section-label">{label}</p> : null}
         <Heading>{title}</Heading>
         {description ? <p>{description}</p> : null}
       </div>
       {aside}
-    </div>
+    </Reveal>
   );
 }

@@ -15,16 +15,15 @@ import type {
   Exercise,
   FitnessLevel,
   MuscleGroup,
+  WorkoutType,
 } from "../types";
 
 import { levels, muscleGroups } from "../data/exercises";
+import { Reveal } from "./Reveal";
 import { SectionHeading } from "./SectionHeading";
+import { Select } from "./Select";
 
-export type WorkoutType =
-  | "Dumbbell"
-  | "Bodyweight"
-  | "Gym"
-  | "Kickboxing";
+export type { WorkoutType } from "../types";
 
 type PlannerProps = {
   level: FitnessLevel;
@@ -66,26 +65,20 @@ export function Planner({
         description="Choose your fitness level, workout type, and target muscle groups to build your personalized workout plan."
       />
 
-      <div className="planner-panel">
+      <Reveal className="planner-panel">
         <div className="planner-field">
           <label htmlFor="fitness-level">
             <SlidersHorizontal size={15} aria-hidden="true" />
             Fitness level
           </label>
 
-          <select
+          <Select
             id="fitness-level"
             value={level}
-            onChange={(event) =>
-              onLevelChange(event.target.value as FitnessLevel)
-            }
-          >
-            {levels.map((item) => (
-              <option key={item} value={item}>
-                {item}
-              </option>
-            ))}
-          </select>
+            options={levels}
+            onChange={onLevelChange}
+            ariaLabel="Fitness level"
+          />
         </div>
 
         <div className="planner-field">
@@ -119,7 +112,7 @@ export function Planner({
         </div>
 
         {selectedWorkoutType !== "Kickboxing" && (
-          <div className="planner-field">
+          <div className="planner-field planner-field-wide">
             <span className="field-label">
               <Target size={15} aria-hidden="true" />
               Target muscle groups
@@ -157,7 +150,7 @@ export function Planner({
           <Sparkles size={16} aria-hidden="true" />
           Generate my plan
         </button>
-      </div>
+      </Reveal>
 
       {plan.length > 0 && (
         <div className="plan-results">
@@ -180,9 +173,9 @@ export function Planner({
             </button>
           </div>
 
-          <div className="exercise-grid">
+          <Reveal variant="stagger" className="exercise-grid">
             {plan.map(renderCard)}
-          </div>
+          </Reveal>
         </div>
       )}
     </section>

@@ -1,4 +1,11 @@
-import { Funnel, RotateCcw, Search, SlidersHorizontal, X } from "lucide-react";
+import {
+  Funnel,
+  Heart,
+  RotateCcw,
+  Search,
+  SlidersHorizontal,
+  X
+} from "lucide-react";
 import type { Category, LevelFilter, MuscleGroup } from "../types";
 import { equipmentOptions, levels, muscleGroups } from "../data/exercises";
 import { equipmentIcons } from "../lib/icons";
@@ -16,6 +23,9 @@ type ExerciseFiltersProps = {
   resultCount: number;
   totalCount: number;
   hasActiveFilters: boolean;
+  savedOnly: boolean;
+  onToggleSavedOnly: () => void;
+  favoriteCount: number;
 };
 
 export function ExerciseFilters({
@@ -30,7 +40,10 @@ export function ExerciseFilters({
   onReset,
   resultCount,
   totalCount,
-  hasActiveFilters
+  hasActiveFilters,
+  savedOnly,
+  onToggleSavedOnly,
+  favoriteCount
 }: ExerciseFiltersProps) {
   const categories: Category[] = ["All", ...equipmentOptions];
   const levelOptions: LevelFilter[] = ["All", ...levels];
@@ -69,6 +82,21 @@ export function ExerciseFilters({
           </button>
         ) : null}
       </div>
+
+      <button
+        type="button"
+        className={`saved-toggle${savedOnly ? " active" : ""}`}
+        onClick={onToggleSavedOnly}
+        aria-pressed={savedOnly}
+      >
+        <Heart
+          size={15}
+          aria-hidden="true"
+          fill={savedOnly ? "currentColor" : "none"}
+        />
+        Saved exercises
+        <span className="saved-count">{favoriteCount}</span>
+      </button>
 
       <div className="filter-group">
         <span className="filter-group-title">Equipment</span>

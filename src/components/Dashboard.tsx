@@ -6,6 +6,10 @@ import {
   Target,
   Trophy
 } from "lucide-react";
+
+import { AnimatedNumber } from "./AnimatedNumber";
+import { ProgressBar } from "./ProgressBar";
+import { Reveal } from "./Reveal";
 import { SectionHeading } from "./SectionHeading";
 
 type DashboardProps = {
@@ -23,6 +27,11 @@ export function Dashboard({
   totalSets,
   onStartVisible
 }: DashboardProps) {
+  const completion =
+    totalExercises > 0
+      ? Math.round((completedCount / totalExercises) * 100)
+      : 0;
+
   return (
     <section className="section" id="workouts">
       <SectionHeading
@@ -31,13 +40,15 @@ export function Dashboard({
         description="A quick overview of your exercise and training activity."
       />
 
-      <div className="dashboard-grid">
+      <Reveal variant="stagger" className="dashboard-grid">
         <div className="stat-card">
           <span className="stat-icon">
             <Dumbbell size={20} aria-hidden="true" />
           </span>
           <p>Total exercises</p>
-          <strong>{totalExercises}</strong>
+          <strong>
+            <AnimatedNumber value={totalExercises} />
+          </strong>
           <small>Available in the library</small>
         </div>
         <div className="stat-card">
@@ -45,7 +56,9 @@ export function Dashboard({
             <CircleCheck size={20} aria-hidden="true" />
           </span>
           <p>Exercises completed</p>
-          <strong>{completedCount}</strong>
+          <strong>
+            <AnimatedNumber value={completedCount} />
+          </strong>
           <small>Unique exercises marked done</small>
         </div>
         <div className="stat-card">
@@ -53,7 +66,9 @@ export function Dashboard({
             <Trophy size={20} aria-hidden="true" />
           </span>
           <p>Workouts completed</p>
-          <strong>{workoutsCount}</strong>
+          <strong>
+            <AnimatedNumber value={workoutsCount} />
+          </strong>
           <small>Saved training sessions</small>
         </div>
         <div className="stat-card">
@@ -61,12 +76,29 @@ export function Dashboard({
             <Target size={20} aria-hidden="true" />
           </span>
           <p>Sets checked</p>
-          <strong>{totalSets}</strong>
+          <strong>
+            <AnimatedNumber value={totalSets} />
+          </strong>
           <small>Sets marked in the library</small>
         </div>
-      </div>
+      </Reveal>
 
-      <div className="quick-start-panel">
+      <Reveal className="dashboard-progress">
+        <div className="dashboard-progress-head">
+          <span>Library completion</span>
+          <strong>{completion}%</strong>
+        </div>
+        <ProgressBar
+          value={completedCount}
+          max={totalExercises}
+          label="Exercises completed across the library"
+        />
+        <p>
+          Mark exercises as done or finish a guided session to keep climbing.
+        </p>
+      </Reveal>
+
+      <Reveal className="quick-start-panel">
         <div>
           <p className="section-label">Ready when you are</p>
           <h3>Make today count.</h3>
@@ -77,7 +109,7 @@ export function Dashboard({
           Start workout
           <ArrowRight size={16} aria-hidden="true" />
         </button>
-      </div>
+      </Reveal>
     </section>
   );
 }

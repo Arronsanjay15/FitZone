@@ -3,6 +3,7 @@ import {
   CirclePlay,
   Dumbbell,
   ExternalLink,
+  Heart,
   ListChecks,
   Play,
   Repeat,
@@ -20,18 +21,22 @@ import { Modal } from "./Modal";
 type ExerciseDetailModalProps = {
   exercise: Exercise;
   completed: boolean;
+  favorite: boolean;
   onClose: () => void;
   onStart: () => void;
   onMarkDone: () => void;
+  onToggleFavorite: () => void;
   onWatchVideo: () => void;
 };
 
 export function ExerciseDetailModal({
   exercise,
   completed,
+  favorite,
   onClose,
   onStart,
   onMarkDone,
+  onToggleFavorite,
   onWatchVideo
 }: ExerciseDetailModalProps) {
   const video = getExerciseVideo(exercise);
@@ -121,6 +126,19 @@ export function ExerciseDetailModal({
         >
           <CirclePlay size={16} aria-hidden="true" />
           Watch video
+        </button>
+        <button
+          type="button"
+          className={`details-button${favorite ? " is-favorite" : ""}`}
+          onClick={onToggleFavorite}
+          aria-pressed={favorite}
+        >
+          <Heart
+            size={16}
+            aria-hidden="true"
+            fill={favorite ? "currentColor" : "none"}
+          />
+          {favorite ? "Saved" : "Save"}
         </button>
         <button
           type="button"

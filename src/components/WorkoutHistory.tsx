@@ -1,5 +1,6 @@
 import { CalendarDays, Play, Trash, Trophy } from "lucide-react";
 import type { WorkoutHistoryEntry } from "../types";
+import { Reveal } from "./Reveal";
 import { SectionHeading } from "./SectionHeading";
 import { EmptyState } from "./EmptyState";
 
@@ -42,7 +43,7 @@ export function WorkoutHistory({
         }
       />
 
-      <div className="history-summary">
+      <Reveal variant="stagger" className="history-summary">
         <div>
           <span>Total sessions</span>
           <strong>{history.length}</strong>
@@ -57,7 +58,7 @@ export function WorkoutHistory({
             {history[0] ? formatDate(history[0].completedAt) : "Not yet"}
           </strong>
         </div>
-      </div>
+      </Reveal>
 
       {history.length === 0 ? (
         <EmptyState
@@ -75,7 +76,7 @@ export function WorkoutHistory({
           </button>
         </EmptyState>
       ) : (
-        <div className="history-list">
+        <Reveal variant="stagger" className="history-list">
           {history.map((entry) => (
             <article className="history-item" key={entry.id}>
               <div className="history-icon">
@@ -93,7 +94,7 @@ export function WorkoutHistory({
               </span>
             </article>
           ))}
-        </div>
+        </Reveal>
       )}
     </section>
   );

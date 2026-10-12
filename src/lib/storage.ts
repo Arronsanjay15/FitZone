@@ -1,7 +1,8 @@
 export const STORAGE_KEYS = {
   completed: "fitzone-completed",
   sets: "fitzone-set-checks",
-  history: "fitzone-history"
+  history: "fitzone-history",
+  favorites: "fitzone-favorites"
 } as const;
 
 export function readStorage<T>(key: string, fallback: T): T {

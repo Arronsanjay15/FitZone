@@ -12,6 +12,7 @@ import type {
   MuscleGroup,
   SetChecks,
   WorkoutHistoryEntry,
+  WorkoutType,
 } from "./types";
 
 import { exercises, levelOrder } from "./data/exercises";
@@ -22,12 +23,11 @@ import {
   writeStorage,
 } from "./lib/storage";
 
+import { useToast } from "./hooks/useToast";
+
 import { Navbar } from "./components/Navbar";
 import { Hero } from "./components/Hero";
-import {
-  Planner,
-  type WorkoutType,
-} from "./components/Planner";
+import { Planner } from "./components/Planner";
 import { Dashboard } from "./components/Dashboard";
 import { ExerciseLibrary } from "./components/ExerciseLibrary";
 import { ExerciseCard } from "./components/ExerciseCard";
@@ -35,20 +35,29 @@ import { ExerciseDetailModal } from "./components/ExerciseDetailModal";
 import { VideoModal } from "./components/VideoModal";
 import { WorkoutSession } from "./components/WorkoutSession";
 import { WorkoutHistory } from "./components/WorkoutHistory";
+import { BackToTop } from "./components/BackToTop";
+import { Reveal } from "./components/Reveal";
 
 const REST_SECONDS = 30;
 
 function App() {
+  const { notify } = useToast();
+
   // Exercise library filters
   const [category, setCategory] = useState<Category>("All");
   const [levelFilter, setLevelFilter] = useState<LevelFilter>("All");
   const [search, setSearch] = useState("");
   const [selectedMuscles, setSelectedMuscles] =
     useState<MuscleGroup[]>([]);
+  const [savedOnly, setSavedOnly] = useState(false);
 
   // Saved progress
   const [completedExercises, setCompletedExercises] = useState<string[]>(
     () => readStorage(STORAGE_KEYS.completed, [])
+  );
+
+  const [favorites, setFavorites] = useState<string[]>(() =>
+    readStorage(STORAGE_KEYS.favorites, [])
   );
 
   const [setChecks, setSetChecks] = useState<SetChecks>(
@@ -101,6 +110,11 @@ function App() {
     writeStorage(STORAGE_KEYS.history, workoutHistory);
   }, [workoutHistory]);
 
+  // Save favorites
+  useEffect(() => {
+    writeStorage(STORAGE_KEYS.favorites, favorites);
+  }, [favorites]);
+
   // Rest timer
   useEffect(() => {
     if (!sessionOpen || !resting) return;
@@ -147,14 +161,25 @@ function App() {
           exercise.muscleGroups.includes(group)
         );
 
+      const favoriteMatch =
+        !savedOnly || favorites.includes(exercise.id);
+
       return (
         categoryMatch &&
         levelMatch &&
         searchMatch &&
-        muscleMatch
+        muscleMatch &&
+        favoriteMatch
       );
     });
-  }, [category, levelFilter, search, selectedMuscles]);
+  }, [
+    category,
+    levelFilter,
+    search,
+    selectedMuscles,
+    savedOnly,
+    favorites,
+  ]);
 
   const currentExercise = session[sessionIndex] ?? null;
 
@@ -197,12 +222,40 @@ function App() {
     });
   };
 
-  // Mark an exercise as completed
+  // Mark an exercise as completed (silent — used by the guided session)
   const markExerciseDone = (exercise: Exercise) => {
     setCompletedExercises((previous) =>
       previous.includes(exercise.id)
         ? previous
         : [...previous, exercise.id]
+    );
+  };
+
+  // Mark as done from a card or modal, with confirmation feedback
+  const handleMarkDone = (exercise: Exercise) => {
+    const alreadyDone = completedExercises.includes(exercise.id);
+    markExerciseDone(exercise);
+
+    if (!alreadyDone) {
+      notify(`${exercise.name} marked as done`, "success");
+    }
+  };
+
+  // Save or remove an exercise from the saved list
+  const toggleFavorite = (exercise: Exercise) => {
+    const isSaved = favorites.includes(exercise.id);
+
+    setFavorites((previous) =>
+      previous.includes(exercise.id)
+        ? previous.filter((id) => id !== exercise.id)
+        : [...previous, exercise.id]
+    );
+
+    notify(
+      isSaved
+        ? `Removed ${exercise.name} from saved`
+        : `Saved ${exercise.name} for later`,
+      isSaved ? "info" : "success"
     );
   };
 
@@ -212,6 +265,7 @@ function App() {
     setCategory("All");
     setLevelFilter("All");
     setSelectedMuscles([]);
+    setSavedOnly(false);
   };
 
   // Generate a 3–4 exercise plan for the selected workout type
@@ -236,6 +290,7 @@ function App() {
 
     if (eligibleExercises.length === 0) {
       setPlan([]);
+      notify("No exercises match those settings. Try another combination.", "warn");
       return;
     }
 
@@ -304,6 +359,10 @@ function App() {
     }
 
     setPlan(selected);
+    notify(
+      `Your ${selectedWorkoutType.toLowerCase()} plan is ready — ${selected.length} exercises`,
+      "success"
+    );
   };
 
   // Start a guided workout
@@ -354,6 +413,12 @@ function App() {
     setSessionCompletedNames(completedNames);
     setSessionFinished(true);
     setResting(false);
+    notify(
+      `Workout saved — ${completedNames.length} ${
+        completedNames.length === 1 ? "exercise" : "exercises"
+      } logged`,
+      "success"
+    );
   };
 
   // Complete the current exercise and move forward
@@ -391,6 +456,7 @@ function App() {
     }
 
     setWorkoutHistory([]);
+    notify("Workout history cleared", "info");
   };
 
   // Reusable exercise card
@@ -399,10 +465,12 @@ function App() {
       key={exercise.id}
       exercise={exercise}
       completed={completedExercises.includes(exercise.id)}
+      favorite={favorites.includes(exercise.id)}
       setChecks={setChecks}
       onDetails={() => setSelectedExercise(exercise)}
-      onMarkDone={() => markExerciseDone(exercise)}
+      onMarkDone={() => handleMarkDone(exercise)}
       onToggleSet={toggleSet}
+      onToggleFavorite={() => toggleFavorite(exercise)}
       onStart={() => startWorkout([exercise])}
       onWatchVideo={() => setActiveVideo(exercise)}
     />
@@ -417,6 +485,8 @@ function App() {
           exerciseCount={exercises.length}
           completedCount={completedExercises.length}
           workoutsLogged={workoutHistory.length}
+          focus={selectedWorkoutType}
+          onFocusChange={changeWorkoutType}
         />
 
         <Planner
@@ -454,6 +524,9 @@ function App() {
           onLevelChange={setLevelFilter}
           selectedMuscles={selectedMuscles}
           onToggleMuscle={toggleMuscle}
+          savedOnly={savedOnly}
+          onToggleSavedOnly={() => setSavedOnly((value) => !value)}
+          favoriteCount={favorites.length}
           onReset={resetFilters}
           renderCard={renderExerciseCard}
         />
@@ -465,22 +538,24 @@ function App() {
         />
 
         <section className="closing-cta">
-          <p className="section-label">
-            <Sparkles size={14} aria-hidden="true" />
-            Your next rep starts now
-          </p>
+          <Reveal className="closing-cta-inner">
+            <p className="section-label">
+              <Sparkles size={14} aria-hidden="true" />
+              Your next rep starts now
+            </p>
 
-          <h2>Consistency beats perfection.</h2>
+            <h2>Consistency beats perfection.</h2>
 
-          <p>
-            Choose your workout, take it one exercise at a time, and
-            keep going.
-          </p>
+            <p>
+              Choose your workout, take it one exercise at a time, and
+              keep going.
+            </p>
 
-          <a className="button-primary" href="#planner">
-            <Dumbbell size={16} aria-hidden="true" />
-            Plan my workout
-          </a>
+            <a className="button-primary" href="#planner">
+              <Dumbbell size={16} aria-hidden="true" />
+              Plan my workout
+            </a>
+          </Reveal>
         </section>
       </main>
 
@@ -509,9 +584,11 @@ function App() {
           completed={completedExercises.includes(
             selectedExercise.id
           )}
+          favorite={favorites.includes(selectedExercise.id)}
           onClose={() => setSelectedExercise(null)}
           onStart={() => startWorkout([selectedExercise])}
-          onMarkDone={() => markExerciseDone(selectedExercise)}
+          onMarkDone={() => handleMarkDone(selectedExercise)}
+          onToggleFavorite={() => toggleFavorite(selectedExercise)}
           onWatchVideo={() => setActiveVideo(selectedExercise)}
         />
       )}
@@ -556,6 +633,8 @@ function App() {
           onClose={() => setActiveVideo(null)}
         />
       )}
+
+      <BackToTop />
     </div>
   );
 }

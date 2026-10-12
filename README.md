@@ -111,6 +111,12 @@ No routing library, no state-management library, and no runtime data fetching fr
 
 ## 🚀 Getting Started
 
+### 🔴 Live Version
+
+The app is deployed and ready to use — no installation required:
+
+**👉 [https://fitzonepro-zephyr.vercel.app/](https://fitzonepro-zephyr.vercel.app/)**
+
 ### Prerequisites
 
 - **Node.js** 20.19+ or 22.12+ (required by Vite 8)
