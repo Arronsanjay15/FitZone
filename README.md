@@ -41,7 +41,7 @@ Build a personalized workout plan that adapts to your fitness level, explore a c
 
 ## 🔎 Overview
 
-FitZone is a single-page React application with **no backend and no account required**. Everything a user does — completed exercises, per-set check-offs, and finished workout sessions — is persisted to `localStorage`, so the app works fully offline after the first load and keeps progress between visits.
+FitZone is a single-page React application with **no backend and no account required**. Everything a user does — completed exercises, per-set check-offs, saved favourites, the 30-day challenge, and finished workout sessions — is persisted to `localStorage`, so the app works fully offline after the first load and keeps progress between visits.
 
 It is also an **installable PWA**: add it to your home screen or desktop and it launches in its own window, starts instantly from cache, and keeps working with no connection at all. See [PWA & Offline](#-pwa--offline).
 
@@ -51,10 +51,10 @@ The experience is organized into five anchor-linked sections:
 
 | Section | Purpose |
 | --- | --- |
-| **Home** | Hero introduction with live stats and primary calls to action. |
+| **Home** | Hero introduction with live stats, a focus selector, a challenge teaser, and primary calls to action. |
 | **Planner** | Generates a level-adjusted workout from your selections (2 sets / 3 exercises for beginners, up to 4 exercises for intermediate & advanced). |
-| **Dashboard** | Progress overview: exercises, completions, sessions, and sets. |
-| **Exercises** | Searchable, filterable library of all exercises. |
+| **Dashboard** | The **30-day challenge** plus progress overview: exercises, completions, sessions, sets, and streaks. |
+| **Exercises** | Searchable, filterable library of all exercises, with saved favourites. |
 | **History** | Log of guided workout sessions you have finished. |
 
 ---
@@ -80,6 +80,7 @@ The experience is organized into five anchor-linked sections:
 - **80 curated exercises** across four equipment categories and three difficulty levels.
 - Live **search** across names, descriptions, and muscles.
 - Filter by **equipment**, **difficulty**, and multiple **muscle groups**.
+- **Save favourites** with a heart toggle, then filter the library down to your saved exercises.
 - Responsive filter sidebar with an active-filter reset.
 
 ### 🖼️ Rich Exercise Media
@@ -87,10 +88,21 @@ The experience is organized into five anchor-linked sections:
 - Verified **YouTube tutorial** embeds with graceful search fallback.
 - Multi-source, resilient image loading with skeleton and icon fallbacks.
 
+### 🗓️ 30-Day Challenge
+- A structured **muscle-building program** on the Dashboard — a themed workout for every one of the 30 days.
+- **Levels ramp automatically**: days 1–10 are beginner, 11–20 intermediate, and 21–30 advanced.
+- **Choose your workout type** (Dumbbell / Bodyweight / Gym / Kickboxing) and the whole program is generated around it.
+- Each day's exercises are produced on demand from the day's focus and phase; the next day unlocks **24 hours after** you finish the current one.
+- Tracks a **day streak**, progress bar, per-day completion, and a finish celebration. See [How It Works](#-how-it-works).
+
 ### ✅ Progress Tracking
 - Mark individual **sets** as complete per exercise.
 - Mark whole exercises as **done**.
 - Animated dashboard statistics and a persistent workout history.
+
+### 💬 In-App Feedback
+- Toast notifications for successes, warnings, and info (marking done, generating plans, challenge changes, resetting data).
+- A top scroll-progress bar and a floating **Back to top** control.
 
 ### 📲 Installable PWA
 - Install to the home screen / desktop — runs in a standalone window with no browser chrome.
@@ -189,19 +201,27 @@ FitZone/
 ├─ src/
 │  ├─ assets/                  # Static images and starter SVGs
 │  ├─ components/              # UI components (presentational + shell)
-│  │  ├─ Dashboard.tsx         # Progress statistics + quick start
+│  │  ├─ AnimatedNumber.tsx    # Count-up number animation
+│  │  ├─ BackToTop.tsx         # Floating scroll-to-top control
+│  │  ├─ Dashboard.tsx         # 30-day challenge + progress statistics
 │  │  ├─ EmptyState.tsx        # Reusable empty-state block
-│  │  ├─ ExerciseCard.tsx      # Library/plan exercise card
+│  │  ├─ ExerciseCard.tsx      # Library/plan exercise card (+ favourite toggle)
 │  │  ├─ ExerciseDetailModal.tsx # Full exercise details dialog
-│  │  ├─ ExerciseFilters.tsx   # Search + equipment/level/muscle filters
+│  │  ├─ ExerciseFilters.tsx   # Search + equipment/level/muscle/saved filters
 │  │  ├─ ExerciseLibrary.tsx   # Library section + layout
 │  │  ├─ ExerciseMedia.tsx     # Resilient image/thumbnail component
-│  │  ├─ Hero.tsx              # Landing hero with live stats
+│  │  ├─ ExerciseThumb.tsx     # Compact media + name row (plan/challenge lists)
+│  │  ├─ Hero.tsx              # Landing hero, focus selector + challenge teaser
 │  │  ├─ Modal.tsx             # Accessible modal shell
-│  │  ├─ Navbar.tsx            # Sticky navigation + mobile menu + install control
+│  │  ├─ Navbar.tsx            # Sticky nav + mobile menu + install control
 │  │  ├─ Planner.tsx           # Workout planner form + results
+│  │  ├─ ProgressBar.tsx       # Accessible progress bar
 │  │  ├─ PwaManager.tsx        # Service-worker registration + update prompt
+│  │  ├─ Reveal.tsx            # Scroll-reveal animation wrapper
+│  │  ├─ ScrollProgress.tsx    # Top-of-page scroll indicator
 │  │  ├─ SectionHeading.tsx    # Shared section heading
+│  │  ├─ Select.tsx            # Custom accessible dropdown
+│  │  ├─ ToastProvider.tsx     # Toast queue provider
 │  │  ├─ VideoModal.tsx        # YouTube tutorial modal
 │  │  ├─ WorkoutHistory.tsx    # Saved sessions list
 │  │  └─ WorkoutSession.tsx    # Guided session runner
@@ -209,19 +229,24 @@ FitZone/
 │  │  ├─ challenge.ts          # 30-day muscle-building program + day generator
 │  │  └─ exercises.ts          # The full 80-exercise dataset + lookups
 │  ├─ hooks/
+│  │  ├─ useExerciseImage.ts   # Image-candidate resolver for a card
+│  │  ├─ useInView.ts          # One-shot intersection observer
 │  │  ├─ useInstallPrompt.ts   # Captures the browser install prompt
-│  │  └─ …                     # Scroll, in-view, challenge, toast hooks
+│  │  ├─ useScrollProgress.ts  # Page scroll progress + offset
+│  │  ├─ useScrollSpy.ts       # Active-section tracking for the navbar
+│  │  └─ useToast.ts           # Access the toast queue
 │  ├─ lib/
 │  │  ├─ challenge.ts          # Challenge progress, streak + unlock logic
 │  │  ├─ icons.ts              # Equipment / level / exercise icon maps
 │  │  ├─ images.ts             # Free Exercise DB image URL resolver
 │  │  ├─ planner.ts            # Level-aware workout plan generation
 │  │  ├─ storage.ts            # Typed localStorage helpers
+│  │  ├─ toast.ts              # Toast types + reducer
 │  │  └─ video.ts              # YouTube URL + thumbnail resolver
 │  ├─ App.css                  # All component styling + design tokens
 │  ├─ App.tsx                  # Application root: state + orchestration
 │  ├─ index.css                # Base document styles + font import
-│  ├─ main.tsx                 # React entry point
+│  ├─ main.tsx                 # React entry point (wraps app in ToastProvider)
 │  └─ types.ts                 # Shared domain types
 ├─ .gitignore
 ├─ eslint.config.js            # Flat ESLint configuration
@@ -248,7 +273,7 @@ FitZone/
 - **Modals** — `selectedExercise`, `activeVideo`
 - **Guided session** — `session`, `sessionIndex`, `sessionOpen`, `resting`, `restSeconds`, `sessionFinished`
 
-Three `useEffect` hooks sync progress state back to `localStorage`; a fourth drives the rest countdown timer.
+Five `useEffect` hooks sync progress state back to `localStorage` (one per key); additional effects advance the challenge's 24-hour unlock timer and drive the guided-session rest countdown.
 
 ### The Planning Algorithm
 
@@ -310,8 +335,11 @@ Defined in `src/types.ts`:
 
 ```ts
 type Equipment    = "Dumbbell" | "Bodyweight" | "Kickboxing" | "Gym";
+type Category     = "All" | Equipment;
 type MuscleGroup  = "Chest" | "Back" | "Arms" | "Shoulders" | "Legs" | "Core";
 type FitnessLevel = "Beginner" | "Intermediate" | "Advanced";
+type LevelFilter  = "All" | FitnessLevel;
+type WorkoutType  = Equipment;   // planner + hero focus + challenge
 
 type Exercise = {
   id: string;
@@ -343,7 +371,15 @@ type ChallengeState = {
   streak: number;
   lastCompletedDate: string | null;
   lastCompletedAt: string | null;
-  workoutType: Equipment;   // the program is built around this type
+  workoutType: WorkoutType;   // the program is built around this type
+};
+
+type ChallengeSummary = {
+  day: number;
+  length: number;
+  title: string;
+  finished: boolean;
+  nextUnlockAt: number | null;
 };
 ```
 
@@ -390,13 +426,15 @@ FitZone pulls in open external resources for media, with safe fallbacks everywhe
 
 ## 💾 Persistence
 
-Progress is stored in `localStorage` under three keys (see `src/lib/storage.ts`):
+Progress is stored in `localStorage` under five keys (see `src/lib/storage.ts`):
 
 | Key | Contents |
 | --- | --- |
 | `fitzone-completed` | Array of completed exercise ids |
 | `fitzone-set-checks` | Map of exercise id → per-set completion flags |
 | `fitzone-history` | Array of finished workout sessions |
+| `fitzone-favorites` | Array of saved ("favourite") exercise ids |
+| `fitzone-challenge` | 30-day challenge state (days, streak, unlock timer, workout type) |
 
 Storage access is wrapped in `try/catch`, so private-browsing modes or quota errors degrade gracefully — progress simply won't persist, and the app keeps working.
 
@@ -453,6 +491,7 @@ Adjust padding or the maskable / Apple background colours in `pwa-assets.config.
 - Semantic landmarks (`header`, `nav`, `main`, `footer`, `section`).
 - Modals use `role="dialog"`, `aria-modal`, `aria-labelledby`, lock background scroll, trap initial focus on the close button, and close on **Escape** or backdrop click.
 - Toggle buttons expose state via `aria-pressed` / `aria-expanded`.
+- Toast notifications are announced through a `role="status"` / `aria-live="polite"` region.
 - Icon-only controls provide `aria-label`s, and decorative icons use `aria-hidden`.
 - Visible focus states and a responsive, keyboard-friendly mobile menu.
 
@@ -469,7 +508,13 @@ Adjust padding or the maskable / Apple background colours in `pwa-assets.config.
 - `src/lib/icons.ts` → `exerciseIcons`
 - `src/lib/images.ts` → `datasetFolders`
 
-**Adding a workout type** — extend the `Equipment` union in `src/types.ts`, the `WorkoutType` union in `src/components/Planner.tsx`, and the `equipmentIcons` / `equipmentOptions` / `equipmentLabels` maps.
+**Adding a workout type** — extend the `Equipment` union (which `WorkoutType` aliases) in `src/types.ts`, then register the new type in the option lists that drive the UI:
+
+- `equipmentOptions` and `equipmentLabels` in `src/data/exercises.ts`
+- `equipmentIcons` in `src/lib/icons.ts`
+- the `workoutTypes` array in `src/components/Planner.tsx`
+- the `challengeTypes` array in `src/components/Dashboard.tsx`
+- the `focusOptions` array in `src/components/Hero.tsx`
 
 ---
 
