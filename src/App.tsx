@@ -46,6 +46,7 @@ import { VideoModal } from "./components/VideoModal";
 import { WorkoutSession } from "./components/WorkoutSession";
 import { WorkoutHistory } from "./components/WorkoutHistory";
 import { BackToTop } from "./components/BackToTop";
+import { PwaManager } from "./components/PwaManager";
 import { Reveal } from "./components/Reveal";
 
 const REST_SECONDS = 30;
@@ -744,6 +745,7 @@ function App() {
       )}
 
       <BackToTop />
+      <PwaManager />
     </div>
   );
 }

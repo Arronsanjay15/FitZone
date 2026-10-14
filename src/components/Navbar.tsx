@@ -1,6 +1,7 @@
 import { useState } from "react";
 import {
   CalendarClock,
+  Download,
   Dumbbell,
   House,
   LayoutDashboard,
@@ -10,8 +11,10 @@ import {
   Zap
 } from "lucide-react";
 
+import { useInstallPrompt } from "../hooks/useInstallPrompt";
 import { useScrollProgress } from "../hooks/useScrollProgress";
 import { useScrollSpy } from "../hooks/useScrollSpy";
+import { useToast } from "../hooks/useToast";
 import { ScrollProgress } from "./ScrollProgress";
 
 const navLinks = [
@@ -31,6 +34,28 @@ export function Navbar() {
   const activeSection = useScrollSpy(sectionIds);
   const { y } = useScrollProgress();
   const scrolled = y > 12;
+
+  const { notify } = useToast();
+  const { canPrompt, isIos, installed, promptInstall } = useInstallPrompt();
+
+  // Offer installation until the app already runs as an installed PWA.
+  const showInstall = !installed && (canPrompt || isIos);
+
+  const handleInstall = async () => {
+    if (!canPrompt) {
+      notify('Tap Share, then "Add to Home Screen".', "info");
+      return;
+    }
+
+    const outcome = await promptInstall();
+
+    notify(
+      outcome === "accepted"
+        ? "Installing FitZone — it will appear on your home screen"
+        : "Install dismissed — you can install anytime from the navbar",
+      outcome === "accepted" ? "success" : "info"
+    );
+  };
 
   return (
     <header className={`navbar${scrolled ? " is-scrolled" : ""}`}>
@@ -74,6 +99,18 @@ export function Navbar() {
       </nav>
 
       <div className="navbar-actions">
+        {showInstall && (
+          <button
+            type="button"
+            className="nav-install"
+            aria-label="Install FitZone app"
+            onClick={handleInstall}
+          >
+            <Download size={16} aria-hidden="true" />
+            <span>Install</span>
+          </button>
+        )}
+
         <a className="button-primary nav-cta" href="#planner">
           <Dumbbell size={16} aria-hidden="true" />
           Start Training
