@@ -16,8 +16,9 @@ import type {
   WorkoutType,
 } from "./types";
 
-import { exercises, levelOrder } from "./data/exercises";
+import { exercises } from "./data/exercises";
 import { getChallengeDay } from "./data/challenge";
+import { generateWorkoutPlan, planRules } from "./lib/planner";
 import {
   makeId,
   readStorage,
@@ -222,7 +223,7 @@ function App() {
 
   // Compact challenge snapshot for the hero
   const challengeSummary = useMemo(() => {
-    const task = getChallengeDay(challenge.unlockedDay);
+    const task = getChallengeDay(challenge.unlockedDay, challenge.workoutType);
 
     return {
       day: challenge.unlockedDay,
@@ -320,99 +321,23 @@ function App() {
     setSavedOnly(false);
   };
 
-  // Generate a 3–4 exercise plan for the selected workout type
+  // Build a plan whose size, difficulty and set count match the user's level
   const generatePlan = () => {
-    const eligibleExercises = exercises.filter((exercise) => {
-      const levelMatch =
-        levelOrder[exercise.level] <= levelOrder[plannerLevel];
-
-      const categoryMatch =
-        exercise.category === selectedWorkoutType;
-
-      // Kickboxing does not use the target-muscle filter.
-      const muscleMatch =
-        selectedWorkoutType === "Kickboxing" ||
-        selectedMuscles.length === 0 ||
-        selectedMuscles.some((group) =>
-          exercise.muscleGroups.includes(group)
-        );
-
-      return levelMatch && categoryMatch && muscleMatch;
+    const nextPlan = generateWorkoutPlan({
+      level: plannerLevel,
+      workoutType: selectedWorkoutType,
+      muscleGroups: selectedMuscles,
     });
 
-    if (eligibleExercises.length === 0) {
+    if (nextPlan.length === 0) {
       setPlan([]);
       notify("No exercises match those settings. Try another combination.", "warn");
       return;
     }
 
-    // Randomize the available exercises.
-    const shuffled = [...eligibleExercises].sort(
-      () => Math.random() - 0.5
-    );
-
-    const targetCount = Math.min(
-      shuffled.length,
-      Math.random() < 0.5 ? 3 : 4
-    );
-
-    const selected: Exercise[] = [];
-    const usedMuscles = new Set<MuscleGroup>();
-
-    // Prefer exercises that cover different muscle groups.
-    while (selected.length < targetCount) {
-      const remaining = shuffled.filter(
-        (exercise) =>
-          !selected.some((item) => item.id === exercise.id)
-      );
-
-      if (remaining.length === 0) break;
-
-      let bestScore = -1;
-      let bestCandidates: Exercise[] = [];
-
-      for (const exercise of remaining) {
-        const newMuscles = exercise.muscleGroups.filter(
-          (group) => !usedMuscles.has(group)
-        );
-
-        let score = newMuscles.length;
-
-        if (selectedWorkoutType !== "Kickboxing") {
-          const uncoveredSelectedMuscles = selectedMuscles.filter(
-            (group) =>
-              !usedMuscles.has(group) &&
-              exercise.muscleGroups.includes(group)
-          );
-
-          score += uncoveredSelectedMuscles.length * 2;
-        }
-
-        if (score > bestScore) {
-          bestScore = score;
-          bestCandidates = [exercise];
-        } else if (score === bestScore) {
-          bestCandidates.push(exercise);
-        }
-      }
-
-      const chosen =
-        bestCandidates[
-          Math.floor(Math.random() * bestCandidates.length)
-        ];
-
-      if (!chosen) break;
-
-      selected.push(chosen);
-
-      chosen.muscleGroups.forEach((group) =>
-        usedMuscles.add(group)
-      );
-    }
-
-    setPlan(selected);
+    setPlan(nextPlan);
     notify(
-      `Your ${selectedWorkoutType.toLowerCase()} plan is ready — ${selected.length} exercises`,
+      `Your ${plannerLevel.toLowerCase()} ${selectedWorkoutType.toLowerCase()} plan is ready — ${nextPlan.length} exercises · ${planRules[plannerLevel].sets} sets each`,
       "success"
     );
   };
@@ -445,7 +370,7 @@ function App() {
 
   // Launch the workout assigned to a challenge day
   const startChallengeDay = (day: number) => {
-    const task = getChallengeDay(day);
+    const task = getChallengeDay(day, challenge.workoutType);
     if (!task) return;
     startWorkout(task.exercises, day);
   };
@@ -552,6 +477,15 @@ function App() {
     );
   };
 
+  // Change the workout type the challenge program is built around
+  const setChallengeWorkoutType = (workoutType: WorkoutType) => {
+    setChallenge((previous) => ({ ...previous, workoutType }));
+    notify(
+      `Challenge program set to ${workoutType.toLowerCase()} workouts`,
+      "info"
+    );
+  };
+
   // Reset the 30-day challenge
   const resetChallenge = () => {
     if (
@@ -620,6 +554,7 @@ function App() {
           onStartDay={startChallengeDay}
           onCompleteDay={completeChallengeDay}
           onResetChallenge={resetChallenge}
+          onWorkoutTypeChange={setChallengeWorkoutType}
           onStartVisible={startVisibleWorkout}
         />
 

@@ -27,7 +27,7 @@ export default defineConfig({
         name: "FitZone — Workout Planner & Tracker",
         short_name: "FitZone",
         description:
-          "Plan, learn, and complete guided workouts — offline. 48 exercises, a 30-day challenge, and progress tracking saved right on your device.",
+          "Plan, learn, and complete guided workouts — offline. 80 exercises, a 30-day challenge, and progress tracking saved right on your device.",
         id: "/",
         start_url: "/",
         scope: "/",
@@ -64,7 +64,7 @@ export default defineConfig({
           {
             name: "Exercise library",
             short_name: "Exercises",
-            description: "Browse all 48 exercises.",
+            description: "Browse all 80 exercises.",
             url: "/#exercises",
             icons: [
               { src: "pwa-192x192.png", sizes: "192x192", type: "image/png" }

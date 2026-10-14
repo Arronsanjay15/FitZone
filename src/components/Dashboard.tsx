@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ArrowRight,
   Check,
@@ -6,13 +6,21 @@ import {
   Dumbbell,
   Flame,
   Lock,
+  PersonStanding,
   Play,
+  Swords,
   Timer,
-  Trophy
+  Trophy,
+  Weight,
+  type LucideIcon
 } from "lucide-react";
 
-import type { ChallengeState } from "../types";
-import { getChallengeDay } from "../data/challenge";
+import type { ChallengeState, WorkoutType } from "../types";
+import {
+  challengeDaysFor,
+  challengePhaseForDay,
+  challengePhases
+} from "../data/challenge";
 import { nextUnlockAt, UNLOCK_HOURS } from "../lib/challenge";
 import { AnimatedNumber } from "./AnimatedNumber";
 import { ExerciseThumb } from "./ExerciseThumb";
@@ -27,8 +35,21 @@ type DashboardProps = {
   onStartDay: (day: number) => void;
   onCompleteDay: (day: number) => void;
   onResetChallenge: () => void;
+  onWorkoutTypeChange: (type: WorkoutType) => void;
   onStartVisible: () => void;
 };
+
+/** Workout types the muscle-building challenge program can be built around. */
+const challengeTypes: {
+  id: WorkoutType;
+  label: string;
+  icon: LucideIcon;
+}[] = [
+  { id: "Dumbbell", label: "Dumbbell", icon: Dumbbell },
+  { id: "Bodyweight", label: "Bodyweight", icon: PersonStanding },
+  { id: "Gym", label: "Gym", icon: Weight },
+  { id: "Kickboxing", label: "Kickboxing", icon: Swords }
+];
 
 /** `HH:MM:SS` for the 24-hour unlock countdown. */
 function formatCountdown(ms: number): string {
@@ -58,6 +79,7 @@ export function Dashboard({
   onStartDay,
   onCompleteDay,
   onResetChallenge,
+  onWorkoutTypeChange,
   onStartVisible
 }: DashboardProps) {
   const completedDays = challenge.completedDays.length;
@@ -67,10 +89,17 @@ export function Dashboard({
       : 0;
   const finished = completedDays >= challengeLength;
 
+  // The full program for the chosen workout type (deterministic + cached).
+  const challengeDays = useMemo(
+    () => challengeDaysFor(challenge.workoutType),
+    [challenge.workoutType]
+  );
+
   const currentDay = challenge.unlockedDay;
-  const currentTask = getChallengeDay(currentDay);
+  const currentTask = challengeDays[currentDay - 1];
   const currentDone = challenge.completedDays.includes(currentDay);
   const unlockAt = nextUnlockAt(challenge);
+  const activePhase = challengePhaseForDay(currentDay);
 
   const days = Array.from({ length: challengeLength }, (_, index) => index + 1);
 
@@ -92,7 +121,7 @@ export function Dashboard({
       <SectionHeading
         label="Explore"
         title="Your fitness dashboard"
-        description={`Take on the 30-day challenge — a new workout every day, unlocked ${
+        description={`Take on the muscle-building 30-day challenge — a new workout every day, ramping from beginner to advanced, unlocked ${
           UNLOCK_HOURS
         } hours after the last.`}
       />
@@ -156,6 +185,63 @@ export function Dashboard({
           />
         </div>
 
+        <div className="challenge-config">
+          <div className="challenge-config-field">
+            <span className="field-label">
+              <Dumbbell size={15} aria-hidden="true" />
+              Program type
+            </span>
+
+            <div className="muscle-options">
+              {challengeTypes.map(({ id, label, icon: Icon }) => (
+                <button
+                  type="button"
+                  key={id}
+                  className={
+                    challenge.workoutType === id
+                      ? "filter-chip active"
+                      : "filter-chip"
+                  }
+                  onClick={() => onWorkoutTypeChange(id)}
+                  aria-pressed={challenge.workoutType === id}
+                >
+                  <Icon size={15} aria-hidden="true" />
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="challenge-phases">
+            {challengePhases.map((phase) => {
+              const isActive = activePhase?.level === phase.level;
+              const isDone = currentDay > phase.to;
+
+              return (
+                <div
+                  key={phase.level}
+                  className={`challenge-phase${
+                    isActive ? " is-active" : ""
+                  }${isDone ? " is-done" : ""}`}
+                >
+                  <strong>{phase.label}</strong>
+                  <span className="challenge-phase-days">
+                    Days {phase.from}–{phase.to}
+                  </span>
+                  <span className={`tag level-${phase.level.toLowerCase()}`}>
+                    {phase.level}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+
+          <small className="challenge-config-hint">
+            Each 10-day phase steps up the difficulty — days 1–10 beginner,
+            11–20 intermediate, and 21–30 advanced.
+          </small>
+        </div>
+
         {finished ? (
           <div className="challenge-finished">
             <span className="challenge-finished-icon">
@@ -175,6 +261,11 @@ export function Dashboard({
               <div className="challenge-today-info">
                 <h4>{currentTask.title}</h4>
                 <p>
+                  <span
+                    className={`tag level-${currentTask.level.toLowerCase()}`}
+                  >
+                    {currentTask.level}
+                  </span>
                   {currentTask.focus} · {currentTask.exercises.length} exercises
                 </p>
               </div>
@@ -231,10 +322,13 @@ export function Dashboard({
 
         <div className="challenge-days">
           {days.map((day) => {
-            const task = getChallengeDay(day);
+            const task = challengeDays[day - 1];
             const done = challenge.completedDays.includes(day);
             const locked = day > currentDay;
             const state = done ? "done" : locked ? "locked" : "current";
+            const levelClass = task
+              ? ` has-level-${task.level.toLowerCase()}`
+              : "";
 
             const label = done
               ? `Day ${day} completed${task ? ` — ${task.title}` : ""}`
@@ -246,7 +340,7 @@ export function Dashboard({
               <button
                 type="button"
                 key={day}
-                className={`challenge-day is-${state}`}
+                className={`challenge-day is-${state}${levelClass}`}
                 onClick={() => onStartDay(day)}
                 disabled={locked || done}
                 aria-label={label}

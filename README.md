@@ -4,7 +4,7 @@
 
 **A premium, offline-first fitness web app for planning, learning, and completing guided workouts.**
 
-Build a personalized workout plan, explore a curated library of **48 exercises**, follow step-by-step instructions, watch technique videos, and track your progress — all saved locally in your browser.
+Build a personalized workout plan that adapts to your fitness level, explore a curated library of **80 exercises**, follow step-by-step instructions, watch technique videos, and track your progress — all saved locally in your browser.
 
 ### [🚀 Live Demo → fitzonepro-zephyr.vercel.app](https://fitzonepro-zephyr.vercel.app/)
 
@@ -52,7 +52,7 @@ The experience is organized into five anchor-linked sections:
 | Section | Purpose |
 | --- | --- |
 | **Home** | Hero introduction with live stats and primary calls to action. |
-| **Planner** | Generates a personalized 3–4 exercise workout from your selections. |
+| **Planner** | Generates a level-adjusted workout from your selections (2 sets / 3 exercises for beginners, up to 4 exercises for intermediate & advanced). |
 | **Dashboard** | Progress overview: exercises, completions, sessions, and sets. |
 | **Exercises** | Searchable, filterable library of all exercises. |
 | **History** | Log of guided workout sessions you have finished. |
@@ -65,7 +65,10 @@ The experience is organized into five anchor-linked sections:
 - Choose a **fitness level** (Beginner / Intermediate / Advanced).
 - Choose a **workout type** (Dumbbell / Bodyweight / Gym / Kickboxing).
 - Select **target muscle groups** (Chest, Back, Arms, Shoulders, Legs, Core).
-- Generates a tailored **3–4 exercise plan** using a coverage-based selection algorithm (see [How It Works](#-how-it-works)).
+- Generates a tailored plan that **adapts to your level** (see [How It Works](#-how-it-works)):
+  - **Beginner** — **2 sets** per exercise, up to **3 exercises**, drawn from beginner movements only.
+  - **Intermediate** — **3 sets** per exercise, **4 exercises**.
+  - **Advanced** — **3 sets** per exercise, **3–4 exercises**, biased toward advanced movements for extra difficulty.
 
 ### 🧭 Guided Workout Sessions
 - Full-screen step-by-step session runner with an exercise progress bar.
@@ -74,7 +77,7 @@ The experience is organized into five anchor-linked sections:
 - Finishing a session automatically logs it to your history.
 
 ### 📚 Exercise Library
-- **48 curated exercises** across four equipment categories.
+- **80 curated exercises** across four equipment categories and three difficulty levels.
 - Live **search** across names, descriptions, and muscles.
 - Filter by **equipment**, **difficulty**, and multiple **muscle groups**.
 - Responsive filter sidebar with an active-filter reset.
@@ -203,13 +206,16 @@ FitZone/
 │  │  ├─ WorkoutHistory.tsx    # Saved sessions list
 │  │  └─ WorkoutSession.tsx    # Guided session runner
 │  ├─ data/
-│  │  └─ exercises.ts          # The full 48-exercise dataset + lookups
+│  │  ├─ challenge.ts          # 30-day muscle-building program + day generator
+│  │  └─ exercises.ts          # The full 80-exercise dataset + lookups
 │  ├─ hooks/
 │  │  ├─ useInstallPrompt.ts   # Captures the browser install prompt
 │  │  └─ …                     # Scroll, in-view, challenge, toast hooks
 │  ├─ lib/
+│  │  ├─ challenge.ts          # Challenge progress, streak + unlock logic
 │  │  ├─ icons.ts              # Equipment / level / exercise icon maps
 │  │  ├─ images.ts             # Free Exercise DB image URL resolver
+│  │  ├─ planner.ts            # Level-aware workout plan generation
 │  │  ├─ storage.ts            # Typed localStorage helpers
 │  │  └─ video.ts              # YouTube URL + thumbnail resolver
 │  ├─ App.css                  # All component styling + design tokens
@@ -236,8 +242,8 @@ FitZone/
 
 `src/App.tsx` is the single source of truth. It owns all application state with `useState` and derives filtered data with `useMemo`, passing values down as props:
 
-- **Library filters** — `category`, `levelFilter`, `search`, `selectedMuscles`
-- **Persisted progress** — `completedExercises`, `setChecks`, `workoutHistory`
+- **Library filters** — `category`, `levelFilter`, `search`, `selectedMuscles`, `savedOnly`
+- **Persisted progress** — `completedExercises`, `setChecks`, `workoutHistory`, `favorites`, `challenge`
 - **Planner** — `plannerLevel`, `selectedWorkoutType`, `plan`
 - **Modals** — `selectedExercise`, `activeVideo`
 - **Guided session** — `session`, `sessionIndex`, `sessionOpen`, `resting`, `restSeconds`, `sessionFinished`
@@ -246,17 +252,43 @@ Three `useEffect` hooks sync progress state back to `localStorage`; a fourth dri
 
 ### The Planning Algorithm
 
-`generatePlan()` builds a balanced plan in four steps:
+`generatePlan()` (backed by `generateWorkoutPlan()` in `src/lib/planner.ts`) builds a balanced, level-aware plan:
 
 1. **Filter** the library to exercises at or below the selected difficulty level whose equipment matches the chosen workout type. Target-muscle filtering applies to every type **except Kickboxing**.
-2. **Shuffle** the eligible exercises.
-3. **Pick 3 or 4** exercises (randomized) using a greedy, coverage-maximizing loop:
+2. **Pick a plan size for the level** — the rules live in `planRules`:
+
+   | Level | Sets per exercise | Exercises |
+   | --- | ---: | --- |
+   | Beginner | 2 | 3 (max) |
+   | Intermediate | 3 | 4 |
+   | Advanced | 3 | 3–4 |
+
+3. **Shuffle** the eligible exercises.
+4. **Select** exercises with a greedy, coverage-maximizing loop:
    - Prefer exercises that introduce **new muscle groups** (`score += newMuscles`).
    - Bonus-weight exercises that cover your explicitly **selected target muscles** (`score += uncoveredSelected * 2`).
+   - Add a **difficulty nudge** toward your own level (`score += 3`) so a higher level actually feels harder.
    - Break ties randomly for variety.
-4. Store the result as the active `plan`.
+5. **Backfill** — if the targeted muscle groups are too narrow for the level (for example a beginner *Gym* core session), the plan is topped up with other exercises from the same workout type and level, so a full session is always produced instead of an empty or short one.
+6. **Adjust the sets** of every chosen exercise to the level's set count (e.g. beginners get 2 sets even if the library default is 3).
 
-This keeps plans varied between generations while still respecting your goals.
+This keeps plans varied between generations while matching both your goals and your fitness level.
+
+### The 30-Day Challenge
+
+The Dashboard challenge is a structured **muscle-building program** rather than a fixed list of workouts. It is defined by a 30-day schedule in `src/data/challenge.ts` where each day has a themed focus (push, pull, legs, core, full body…) and a difficulty phase:
+
+| Phase | Days | Level |
+| --- | --- | --- |
+| Foundation | 1–10 | Beginner |
+| Build | 11–20 | Intermediate |
+| Peak | 21–30 | Advanced |
+
+Each day's exercises are **generated on demand** from the day's focus and phase level using the same `generateWorkoutPlan()` engine, so the difficulty genuinely ramps up as the user progresses.
+
+- **Workout type selection** — a selector on the challenge card lets the user build the whole program around Dumbbell, Bodyweight, Gym or Kickboxing training. The choice is persisted in `ChallengeState.workoutType`.
+- **Deterministic plans** — generation is seeded per `(workoutType, day)`, so a given day always yields the same workout and never reshuffles between visits.
+- **24-hour cadence** — days unlock 24 hours after the previous completion, and the program keeps the chosen focus from hammering the same muscles two days running.
 
 ### Resilient Media Loading
 
@@ -304,6 +336,15 @@ type WorkoutHistoryEntry = {
 };
 
 type SetChecks = Record<string, boolean[]>;   // exerciseId → per-set flags
+
+type ChallengeState = {
+  completedDays: number[];
+  unlockedDay: number;
+  streak: number;
+  lastCompletedDate: string | null;
+  lastCompletedAt: string | null;
+  workoutType: Equipment;   // the program is built around this type
+};
 ```
 
 Each `Exercise` also carries a **description**, ordered **step-by-step instructions**, and safety/technique **tips** surfaced in the detail and session views.
@@ -312,24 +353,24 @@ Each `Exercise` also carries a **description**, ordered **step-by-step instructi
 
 ## 🏆 Exercise Library
 
-The library contains **48 exercises**, split across equipment categories and difficulty levels:
+The library contains **80 exercises**, split across equipment categories and difficulty levels:
 
 **By equipment**
 
 | Category | Count |
 | --- | ---: |
-| Bodyweight | 21 |
-| Dumbbell | 15 |
-| Gym | 6 |
-| Kickboxing | 6 |
+| Bodyweight | 31 |
+| Dumbbell | 23 |
+| Gym | 15 |
+| Kickboxing | 11 |
 
 **By difficulty**
 
 | Level | Count |
 | --- | ---: |
-| Beginner | 24 |
-| Intermediate | 19 |
-| Advanced | 5 |
+| Beginner | 34 |
+| Intermediate | 31 |
+| Advanced | 15 |
 
 Exercises span all six muscle groups (Chest, Back, Arms, Shoulders, Legs, Core) and cover strength, core, cardio, and martial-arts conditioning.
 

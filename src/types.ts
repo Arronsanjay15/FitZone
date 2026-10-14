@@ -64,6 +64,8 @@ export type ChallengeState = {
   lastCompletedDate: string | null;
   /** ISO timestamp of the most recent completion, used for the 24h unlock timer. */
   lastCompletedAt: string | null;
+  /** Workout type the muscle-building challenge program is built around. */
+  workoutType: WorkoutType;
 };
 
 /** Compact view of the challenge for the Hero and other summaries. */

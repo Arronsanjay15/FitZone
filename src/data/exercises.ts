@@ -1103,6 +1103,695 @@ export const exercises: Exercise[] = [
       "Keep your lower back pressed against the pad."
     ],
     videoId: "ETOAyWM6i6A"
+  },
+
+  // ---------------------------------------------------------------
+  // BEGINNER ADDITIONS
+  // ---------------------------------------------------------------
+  {
+    id: "goblet-squats",
+    name: "Goblet Squats",
+    category: "Dumbbell",
+    level: "Beginner",
+    sets: 3,
+    reps: "12–15 reps",
+    description: "Learn the squat pattern with a single dumbbell held at your chest.",
+    muscles: "Quads, glutes and core",
+    muscleGroups: ["Legs", "Core"],
+    instructions: [
+      "Hold one dumbbell vertically against your chest with both hands.",
+      "Stand with your feet shoulder-width apart.",
+      "Bend your knees and sit down between your hips.",
+      "Push through your feet to stand back up."
+    ],
+    tips: [
+      "Keep the dumbbell tight to your chest so you stay upright.",
+      "Squat only as deep as you can keep your heels down."
+    ]
+  },
+  {
+    id: "dumbbell-shrugs",
+    name: "Dumbbell Shrugs",
+    category: "Dumbbell",
+    level: "Beginner",
+    sets: 3,
+    reps: "12–15 reps",
+    description: "Build the upper back and traps with a simple shoulder shrug.",
+    muscles: "Traps and upper back",
+    muscleGroups: ["Back", "Shoulders"],
+    instructions: [
+      "Stand tall with a dumbbell in each hand at your sides.",
+      "Keep your arms straight and your shoulders relaxed.",
+      "Lift your shoulders straight up toward your ears.",
+      "Pause briefly, then lower with control."
+    ],
+    tips: [
+      "Shrug straight up — don't roll your shoulders.",
+      "Avoid bending your elbows or swinging the weights."
+    ]
+  },
+  {
+    id: "superman-hold",
+    name: "Superman Hold",
+    category: "Bodyweight",
+    level: "Beginner",
+    sets: 3,
+    reps: "20–30 seconds",
+    description: "Strengthen the lower back and glutes with an isometric hold.",
+    muscles: "Lower back, glutes and shoulders",
+    muscleGroups: ["Back", "Core"],
+    instructions: [
+      "Lie face down with your arms extended in front of you.",
+      "Keep your neck in a comfortable, neutral position.",
+      "Lift your arms, chest and legs slightly off the floor.",
+      "Hold, then lower everything slowly."
+    ],
+    tips: [
+      "Lift only as high as feels comfortable for your lower back.",
+      "Keep breathing steadily throughout the hold."
+    ]
+  },
+  {
+    id: "leg-extensions",
+    name: "Leg Extensions",
+    category: "Gym",
+    level: "Beginner",
+    sets: 3,
+    reps: "12–15 reps",
+    description: "Isolate the quads with a guided machine movement.",
+    muscles: "Quadriceps",
+    muscleGroups: ["Legs"],
+    instructions: [
+      "Sit in the machine with your knees aligned to the pivot.",
+      "Tuck the pad comfortably over your shins.",
+      "Extend your knees until your legs are straight.",
+      "Lower the weight under control."
+    ],
+    tips: [
+      "Don't slam the weight down between reps.",
+      "Keep your hips planted against the seat."
+    ]
+  },
+  {
+    id: "lying-leg-curls",
+    name: "Lying Leg Curls",
+    category: "Gym",
+    level: "Beginner",
+    sets: 3,
+    reps: "10–12 reps",
+    description: "Train the hamstrings with a supported curling motion.",
+    muscles: "Hamstrings",
+    muscleGroups: ["Legs"],
+    instructions: [
+      "Lie face down with the pad resting above your heels.",
+      "Hold the handles and keep your hips down.",
+      "Curl your heels toward your glutes.",
+      "Lower slowly without letting the weight drop."
+    ],
+    tips: [
+      "Keep your hips pressed into the bench.",
+      "Squeeze your hamstrings at the top of each rep."
+    ]
+  },
+  {
+    id: "face-pulls",
+    name: "Face Pulls",
+    category: "Gym",
+    level: "Beginner",
+    sets: 3,
+    reps: "12–15 reps",
+    description: "Strengthen the rear shoulders and upper back for healthy posture.",
+    muscles: "Rear shoulders and upper back",
+    muscleGroups: ["Shoulders", "Back"],
+    instructions: [
+      "Set a rope attachment at about eye height.",
+      "Grip the rope with your palms facing in and step back.",
+      "Pull the rope toward your face, leading with your elbows.",
+      "Squeeze your shoulder blades, then extend your arms."
+    ],
+    tips: [
+      "Keep your elbows high and in line with your shoulders.",
+      "Use light weight and focus on the squeeze."
+    ]
+  },
+  {
+    id: "body-kicks",
+    name: "Body Kicks",
+    category: "Kickboxing",
+    level: "Beginner",
+    sets: 3,
+    reps: "8 reps per leg",
+    description: "Practice a controlled mid-level kick for balance and power.",
+    muscles: "Glutes, quads, obliques and core",
+    muscleGroups: ["Legs", "Core"],
+    instructions: [
+      "Start in your fighting stance with hands up in guard.",
+      "Lift your rear knee and turn your hip over.",
+      "Extend your leg to a comfortable mid height.",
+      "Retract your leg and return to your stance."
+    ],
+    tips: [
+      "Turn your supporting foot as you kick to protect your knee.",
+      "Kick at a height you can control with good balance."
+    ],
+    videoId: "S2I5O92wXpI"
+  },
+
+  // ---------------------------------------------------------------
+  // INTERMEDIATE ADDITIONS
+  // ---------------------------------------------------------------
+  {
+    id: "dumbbell-lunges",
+    name: "Dumbbell Lunges",
+    category: "Dumbbell",
+    level: "Intermediate",
+    sets: 3,
+    reps: "10 reps per leg",
+    description: "Build single-leg strength and balance while holding dumbbells.",
+    muscles: "Quads, glutes and hamstrings",
+    muscleGroups: ["Legs", "Core"],
+    instructions: [
+      "Stand tall with a dumbbell in each hand at your sides.",
+      "Step forward and lower both knees to about 90 degrees.",
+      "Keep your torso upright and front knee over your ankle.",
+      "Push through your front foot to return and switch legs."
+    ],
+    tips: [
+      "Take a long enough step so your front knee stays over your ankle.",
+      "Keep your core braced to stay balanced."
+    ]
+  },
+  {
+    id: "bent-over-rows",
+    name: "Bent-Over Rows",
+    category: "Dumbbell",
+    level: "Intermediate",
+    sets: 3,
+    reps: "10–12 reps",
+    description: "Build the mid-back and biceps with a horizontal pulling motion.",
+    muscles: "Mid-back, lats and biceps",
+    muscleGroups: ["Back", "Arms"],
+    instructions: [
+      "Hold a dumbbell in each hand and hinge forward with a flat back.",
+      "Let your arms hang beneath your shoulders.",
+      "Pull the weights toward your ribs, squeezing your shoulder blades.",
+      "Lower the weights slowly with control."
+    ],
+    tips: [
+      "Keep your back flat and neck neutral.",
+      "Lead with your elbows instead of your hands."
+    ]
+  },
+  {
+    id: "dumbbell-step-ups",
+    name: "Dumbbell Step-Ups",
+    category: "Dumbbell",
+    level: "Intermediate",
+    sets: 3,
+    reps: "10 reps per leg",
+    description: "Develop single-leg strength and stability on a step or bench.",
+    muscles: "Quads, glutes and hamstrings",
+    muscleGroups: ["Legs", "Core"],
+    instructions: [
+      "Hold a dumbbell in each hand and stand facing a stable step.",
+      "Place one whole foot on the step.",
+      "Drive through that foot to stand up onto the step.",
+      "Lower back down slowly and switch legs."
+    ],
+    tips: [
+      "Use a step height you can control safely.",
+      "Avoid pushing off the bottom leg too much."
+    ]
+  },
+  {
+    id: "side-plank",
+    name: "Side Plank",
+    category: "Bodyweight",
+    level: "Intermediate",
+    sets: 3,
+    reps: "20–40 seconds per side",
+    description: "Build lateral core strength and stability.",
+    muscles: "Obliques, deep core and shoulders",
+    muscleGroups: ["Core", "Shoulders"],
+    instructions: [
+      "Lie on your side with your elbow under your shoulder.",
+      "Stack your feet and keep your body in a straight line.",
+      "Lift your hips so your body forms a straight line from head to feet.",
+      "Hold, then lower and switch sides."
+    ],
+    tips: [
+      "Drop to your knee to make the hold easier.",
+      "Keep your hips lifted and stacked, not rolled forward."
+    ]
+  },
+  {
+    id: "russian-twists",
+    name: "Russian Twists",
+    category: "Bodyweight",
+    level: "Intermediate",
+    sets: 3,
+    reps: "20 reps",
+    description: "Train the obliques with a controlled rotational movement.",
+    muscles: "Obliques and abdominals",
+    muscleGroups: ["Core"],
+    instructions: [
+      "Sit on the floor with your knees bent and heels down.",
+      "Lean back slightly and keep your chest lifted.",
+      "Rotate your torso to tap the floor beside one hip.",
+      "Rotate to the other side, counting each tap as a rep."
+    ],
+    tips: [
+      "Rotate from your torso, not just your arms.",
+      "Keep your back straight instead of rounding it."
+    ]
+  },
+  {
+    id: "jump-squats",
+    name: "Jump Squats",
+    category: "Bodyweight",
+    level: "Intermediate",
+    sets: 3,
+    reps: "10–15 reps",
+    description: "Add power and conditioning to the squat pattern.",
+    muscles: "Quads, glutes and calves",
+    muscleGroups: ["Legs", "Core"],
+    instructions: [
+      "Stand with feet shoulder-width apart.",
+      "Lower into a comfortable squat.",
+      "Drive through your feet and jump up.",
+      "Land softly with bent knees and repeat."
+    ],
+    tips: [
+      "Land softly and absorb the impact with your legs.",
+      "Keep your chest lifted and knees tracking over your toes."
+    ]
+  },
+  {
+    id: "inverted-rows",
+    name: "Inverted Rows",
+    category: "Bodyweight",
+    level: "Intermediate",
+    sets: 3,
+    reps: "8–12 reps",
+    description: "Build the upper back and arms using a low bar or table.",
+    muscles: "Mid-back, lats and biceps",
+    muscleGroups: ["Back", "Arms"],
+    instructions: [
+      "Set a sturdy bar at about waist height and lie underneath it.",
+      "Grip the bar slightly wider than shoulder width.",
+      "Pull your chest up toward the bar, squeezing your shoulder blades.",
+      "Lower yourself slowly with control."
+    ],
+    tips: [
+      "Keep your body straight from head to heels.",
+      "Bend your knees to make the row easier."
+    ]
+  },
+  {
+    id: "switch-kicks",
+    name: "Switch Kicks",
+    category: "Kickboxing",
+    level: "Intermediate",
+    sets: 3,
+    reps: "8 reps per leg",
+    description: "Swap stance quickly while throwing a controlled kick.",
+    muscles: "Glutes, quads, obliques and core",
+    muscleGroups: ["Legs", "Core"],
+    instructions: [
+      "Start in your fighting stance with hands up.",
+      "Switch your feet quickly to change stance.",
+      "Throw a controlled kick from the new stance.",
+      "Return to your guard and keep switching."
+    ],
+    tips: [
+      "Stay light on your feet and land softly.",
+      "Keep your guard up between kicks."
+    ],
+    videoId: "D36W9_k9vIs"
+  },
+  {
+    id: "jab-cross-hook",
+    name: "Jab, Cross, Hook Combo",
+    category: "Kickboxing",
+    level: "Intermediate",
+    sets: 3,
+    reps: "1 minute",
+    description: "Link the three fundamental punches into a smooth combination.",
+    muscles: "Shoulders, arms and core",
+    muscleGroups: ["Shoulders", "Arms", "Core"],
+    instructions: [
+      "Start in your fighting stance with hands up.",
+      "Throw the jab, then the cross, rotating your hips.",
+      "Follow with a hook from your lead hand.",
+      "Reset your guard and repeat."
+    ],
+    tips: [
+      "Return each hand to your chin after every punch.",
+      "Rotate your hips to add power to the cross and hook."
+    ],
+    videoId: "MfqAtf_VGMY"
+  },
+  {
+    id: "barbell-overhead-press",
+    name: "Barbell Overhead Press",
+    category: "Gym",
+    level: "Intermediate",
+    sets: 4,
+    reps: "8–10 reps",
+    description: "Build shoulder and triceps strength with a standing press.",
+    muscles: "Shoulders, triceps and upper chest",
+    muscleGroups: ["Shoulders", "Arms"],
+    instructions: [
+      "Set the bar at collarbone height and grip it just outside your shoulders.",
+      "Brace your core and unrack the bar at your upper chest.",
+      "Press the bar overhead until your arms are straight.",
+      "Lower the bar back to your chest with control."
+    ],
+    tips: [
+      "Keep your ribs down and avoid leaning back.",
+      "Move your head slightly back so the bar travels straight."
+    ]
+  },
+  {
+    id: "barbell-bent-over-rows",
+    name: "Barbell Bent-Over Row",
+    category: "Gym",
+    level: "Intermediate",
+    sets: 4,
+    reps: "8–10 reps",
+    description: "Build back thickness and strength with a barbell pull.",
+    muscles: "Mid-back, lats and biceps",
+    muscleGroups: ["Back", "Arms"],
+    instructions: [
+      "Hinge forward at the hips with a flat back and knees slightly bent.",
+      "Grip the bar just outside your knees.",
+      "Pull the bar toward your lower ribs.",
+      "Lower the bar with control without rounding your back."
+    ],
+    tips: [
+      "Keep your back flat and core braced throughout.",
+      "Don't jerk the bar with your lower back."
+    ]
+  },
+  {
+    id: "incline-bench-press",
+    name: "Incline Bench Press",
+    category: "Gym",
+    level: "Intermediate",
+    sets: 4,
+    reps: "8–10 reps",
+    description: "Emphasize the upper chest with an inclined barbell press.",
+    muscles: "Upper chest, front shoulders and triceps",
+    muscleGroups: ["Chest", "Shoulders", "Arms"],
+    instructions: [
+      "Set the bench to a low incline and lie back with feet flat.",
+      "Grip the bar slightly wider than shoulder width.",
+      "Lower the bar to your upper chest with control.",
+      "Press the bar back up over your shoulders."
+    ],
+    tips: [
+      "Use a low incline to keep the work on your chest.",
+      "Always use a spotter or safety pins."
+    ]
+  },
+
+  // ---------------------------------------------------------------
+  // ADVANCED ADDITIONS
+  // ---------------------------------------------------------------
+  {
+    id: "renegade-rows",
+    name: "Renegade Rows",
+    category: "Dumbbell",
+    level: "Advanced",
+    sets: 3,
+    reps: "8 reps per arm",
+    description: "A demanding plank-based row that challenges your whole core.",
+    muscles: "Mid-back, lats and core",
+    muscleGroups: ["Back", "Core", "Arms"],
+    instructions: [
+      "Start in a high plank with a dumbbell under each hand.",
+      "Set your feet wide for stability and brace your core.",
+      "Row one dumbbell to your ribs without twisting your hips.",
+      "Lower it and repeat on the other side."
+    ],
+    tips: [
+      "Keep your hips square to the floor as you row.",
+      "Use lighter dumbbells until your stability improves."
+    ]
+  },
+  {
+    id: "pull-ups",
+    name: "Pull-Ups",
+    category: "Bodyweight",
+    level: "Advanced",
+    sets: 3,
+    reps: "5–10 reps",
+    description: "A challenging upper-body pull that builds the back and arms.",
+    muscles: "Lats, mid-back and biceps",
+    muscleGroups: ["Back", "Arms"],
+    instructions: [
+      "Hang from a bar with an overhand grip slightly wider than shoulders.",
+      "Pull your chest toward the bar, leading with your elbows.",
+      "Lower yourself all the way down with control.",
+      "Use a band for assistance if needed."
+    ],
+    tips: [
+      "Avoid swinging or kipping to gain momentum.",
+      "Use a band or an assisted machine to build up to full reps."
+    ]
+  },
+  {
+    id: "chin-ups",
+    name: "Chin-Ups",
+    category: "Bodyweight",
+    level: "Advanced",
+    sets: 3,
+    reps: "5–10 reps",
+    description: "An underhand pull that emphasizes the biceps and lats.",
+    muscles: "Biceps, lats and mid-back",
+    muscleGroups: ["Back", "Arms"],
+    instructions: [
+      "Hang from a bar with an underhand, shoulder-width grip.",
+      "Pull yourself up until your chin clears the bar.",
+      "Squeeze your back and biceps at the top.",
+      "Lower yourself slowly to a full hang."
+    ],
+    tips: [
+      "Keep your core tight to stop your body from swinging.",
+      "Lower under control instead of dropping."
+    ]
+  },
+  {
+    id: "triceps-dips",
+    name: "Triceps Dips",
+    category: "Bodyweight",
+    level: "Advanced",
+    sets: 3,
+    reps: "8–12 reps",
+    description: "A powerful bodyweight push for the triceps and chest.",
+    muscles: "Triceps, chest and front shoulders",
+    muscleGroups: ["Arms", "Chest", "Shoulders"],
+    instructions: [
+      "Sit on the edge of a sturdy bench and grip the edge beside your hips.",
+      "Slide your hips forward and keep your chest lifted.",
+      "Bend your elbows to lower yourself with control.",
+      "Press back up until your arms are straight."
+    ],
+    tips: [
+      "Keep your elbows pointing back, not flaring out.",
+      "Bend your knees to make the dip easier."
+    ]
+  },
+  {
+    id: "decline-push-ups",
+    name: "Decline Push-Ups",
+    category: "Bodyweight",
+    level: "Advanced",
+    sets: 3,
+    reps: "8–12 reps",
+    description: "A harder push-up variation that loads the upper chest and shoulders.",
+    muscles: "Upper chest, shoulders and triceps",
+    muscleGroups: ["Chest", "Shoulders", "Arms", "Core"],
+    instructions: [
+      "Place your feet on a sturdy bench or step and hands on the floor.",
+      "Keep your body in a straight line from head to heels.",
+      "Lower your chest toward the floor with control.",
+      "Push back up while bracing your core."
+    ],
+    tips: [
+      "The higher your feet, the harder the push-up.",
+      "Keep your hips from sagging or piking up."
+    ]
+  },
+  {
+    id: "hanging-leg-raises",
+    name: "Hanging Leg Raises",
+    category: "Bodyweight",
+    level: "Advanced",
+    sets: 3,
+    reps: "8–12 reps",
+    description: "An advanced core exercise hanging from a bar.",
+    muscles: "Abdominals and hip flexors",
+    muscleGroups: ["Core", "Arms"],
+    instructions: [
+      "Hang from a bar with an overhand grip and engaged shoulders.",
+      "Keep your body still and brace your abdomen.",
+      "Raise your legs until they are parallel to the floor.",
+      "Lower them slowly without swinging."
+    ],
+    tips: [
+      "Bend your knees to make the movement easier.",
+      "Avoid using momentum — control both directions."
+    ]
+  },
+  {
+    id: "spinning-back-kick",
+    name: "Spinning Back Kick",
+    category: "Kickboxing",
+    level: "Advanced",
+    sets: 3,
+    reps: "6 reps per leg",
+    description: "A powerful spinning kick that demands balance and timing.",
+    muscles: "Glutes, hamstrings, obliques and core",
+    muscleGroups: ["Legs", "Core"],
+    instructions: [
+      "Start in your fighting stance with hands up.",
+      "Turn your head to look at the target as you pivot.",
+      "Spin and drive your rear leg straight back toward the target.",
+      "Land facing your target and return to your guard."
+    ],
+    tips: [
+      "Look at the target before you kick to stay balanced.",
+      "Build the turn slowly before adding speed and power."
+    ],
+    videoId: "YM0wVKko7SI"
+  },
+  {
+    id: "flying-knee",
+    name: "Flying Knee",
+    category: "Kickboxing",
+    level: "Advanced",
+    sets: 3,
+    reps: "6 reps per leg",
+    description: "An explosive jumping strike that builds power and conditioning.",
+    muscles: "Core, hip flexors, glutes and quads",
+    muscleGroups: ["Legs", "Core"],
+    instructions: [
+      "Start in your fighting stance with hands up.",
+      "Step forward and drive off your rear foot to jump.",
+      "Bring your rear knee up and forward at the peak.",
+      "Land softly on the same foot and reset."
+    ],
+    tips: [
+      "Land softly with a bent knee to absorb the impact.",
+      "Start with a low jump and build height gradually."
+    ],
+    videoId: "-v0Ar9yrWXQ"
+  },
+  {
+    id: "barbell-front-squats",
+    name: "Barbell Front Squats",
+    category: "Gym",
+    level: "Advanced",
+    sets: 4,
+    reps: "6–8 reps",
+    description: "An advanced squat variation that emphasizes the quads and core.",
+    muscles: "Quads, glutes and core",
+    muscleGroups: ["Legs", "Core"],
+    instructions: [
+      "Rest the bar on the front of your shoulders with elbows high.",
+      "Stand with feet shoulder-width apart and brace your core.",
+      "Squat down while keeping your torso as upright as possible.",
+      "Drive through your feet to stand back up."
+    ],
+    tips: [
+      "Keep your elbows high so the bar stays on your shoulders.",
+      "Reduce the weight if your torso starts tipping forward."
+    ]
+  },
+  {
+    id: "rack-pulls",
+    name: "Rack Pulls",
+    category: "Gym",
+    level: "Advanced",
+    sets: 4,
+    reps: "6–8 reps",
+    description: "A heavy partial deadlift that builds the back and grip.",
+    muscles: "Back, glutes, hamstrings and traps",
+    muscleGroups: ["Back", "Legs", "Core"],
+    instructions: [
+      "Set the bar on safety pins just below knee height.",
+      "Stand with the bar over your mid-foot and grip it firmly.",
+      "Brace your core and keep your back neutral.",
+      "Drive through your legs to stand tall, then lower to the pins."
+    ],
+    tips: [
+      "Keep the bar close to your legs as you pull.",
+      "Reduce the weight if your back starts to round."
+    ]
+  },
+  {
+    id: "dumbbell-reverse-lunges",
+    name: "Dumbbell Reverse Lunges",
+    category: "Dumbbell",
+    level: "Beginner",
+    sets: 3,
+    reps: "10 reps per leg",
+    description: "Build single-leg strength and balance with a controlled step back.",
+    muscles: "Quads, glutes and core",
+    muscleGroups: ["Legs", "Core"],
+    instructions: [
+      "Stand tall with a dumbbell in each hand at your sides.",
+      "Step one foot straight back and lower your back knee toward the floor.",
+      "Keep your front shin vertical and your chest lifted.",
+      "Push through the front foot to stand, then repeat on the other leg."
+    ],
+    tips: [
+      "Step straight back rather than to the side to stay balanced.",
+      "Keep the movement slow and controlled instead of rushing."
+    ]
+  },
+  {
+    id: "dumbbell-one-arm-rows",
+    name: "Dumbbell One-Arm Row",
+    category: "Dumbbell",
+    level: "Beginner",
+    sets: 3,
+    reps: "10 reps per arm",
+    description: "Strengthen your back one side at a time with a supported row.",
+    muscles: "Lats, mid-back and biceps",
+    muscleGroups: ["Back", "Arms"],
+    instructions: [
+      "Place one hand and knee on a bench and the other foot on the floor.",
+      "Hold a dumbbell in your free hand with your arm hanging straight.",
+      "Pull the dumbbell toward your hip, keeping your elbow close to your side.",
+      "Lower slowly, then finish all reps before switching arms."
+    ],
+    tips: [
+      "Keep your back flat and avoid twisting your torso.",
+      "Drive your elbow back instead of lifting with your hand."
+    ]
+  },
+  {
+    id: "cable-crunches",
+    name: "Cable Crunches",
+    category: "Gym",
+    level: "Beginner",
+    sets: 3,
+    reps: "12 reps",
+    description: "Train your abs against smooth, constant cable resistance.",
+    muscles: "Abs and obliques",
+    muscleGroups: ["Core"],
+    instructions: [
+      "Kneel in front of a high pulley and hold the rope beside your head.",
+      "Keep your hips still and brace your abs.",
+      "Curl your ribs toward your knees, rounding your spine.",
+      "Return under control without pulling with your arms."
+    ],
+    tips: [
+      "Move only at the waist — your hips stay in place.",
+      "Exhale as you crunch and squeeze your abs at the bottom."
+    ]
   }
 ];
 

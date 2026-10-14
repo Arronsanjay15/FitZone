@@ -19,6 +19,7 @@ import type {
 } from "../types";
 
 import { levels, muscleGroups } from "../data/exercises";
+import { planRules } from "../lib/planner";
 import { Reveal } from "./Reveal";
 import { SectionHeading } from "./SectionHeading";
 import { Select } from "./Select";
@@ -44,6 +45,18 @@ const workoutTypes = [
   { name: "Gym", icon: Weight },
   { name: "Kickboxing", icon: Swords },
 ] as const;
+
+/** Short description of how a level shapes the generated plan. */
+function describeLevelPlan(level: FitnessLevel): string {
+  const { minExercises, maxExercises, sets } = planRules[level];
+
+  const exerciseCount =
+    minExercises === maxExercises
+      ? `${minExercises} exercises`
+      : `${minExercises}–${maxExercises} exercises`;
+
+  return `${sets} sets per exercise · ${exerciseCount}`;
+}
 
 export function Planner({
   level,
@@ -79,6 +92,10 @@ export function Planner({
             onChange={onLevelChange}
             ariaLabel="Fitness level"
           />
+
+          <small>
+            {level} plans use {describeLevelPlan(level)}.
+          </small>
         </div>
 
         <div className="planner-field">
@@ -158,8 +175,8 @@ export function Planner({
             <div>
               <h3>Your workout plan</h3>
               <p>
-                {plan.length} exercises for your{" "}
-                {selectedWorkoutType.toLowerCase()} workout.
+                {plan.length} exercises · {plan[0]?.sets} sets each for
+                your {selectedWorkoutType.toLowerCase()} workout.
               </p>
             </div>
 

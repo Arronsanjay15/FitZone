@@ -1133,6 +1133,77 @@ main {
   font-size: 1rem;
 }
 
+.challenge-config {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  margin-bottom: 22px;
+  padding: 18px 20px;
+
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.challenge-config-field {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.challenge-config-hint {
+  color: var(--muted);
+  font-size: 0.74rem;
+  line-height: 1.6;
+}
+
+.challenge-phases {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.challenge-phase {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  padding: 12px 14px;
+
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+
+  transition:
+    border-color 160ms ease,
+    background 160ms ease;
+}
+
+.challenge-phase strong {
+  font-size: 0.85rem;
+  font-weight: 750;
+}
+
+.challenge-phase-days {
+  color: var(--muted);
+  font-size: 0.7rem;
+}
+
+.challenge-phase .tag {
+  align-self: flex-start;
+  margin-top: 5px;
+}
+
+.challenge-phase.is-active {
+  background: var(--accent-soft);
+  border-color: var(--accent-border);
+}
+
+.challenge-phase.is-done {
+  opacity: 0.7;
+}
+
 .challenge-today {
   margin-bottom: 22px;
   padding: 20px;
@@ -1433,6 +1504,19 @@ main {
   color: #6d7a66;
   cursor: not-allowed;
   opacity: 0.6;
+}
+
+/* Subtle difficulty cue on each day tile (matches the phase ramp). */
+.challenge-day.has-level-beginner {
+  border-bottom: 2px solid rgba(189, 240, 106, 0.55);
+}
+
+.challenge-day.has-level-intermediate {
+  border-bottom: 2px solid rgba(245, 198, 107, 0.55);
+}
+
+.challenge-day.has-level-advanced {
+  border-bottom: 2px solid rgba(255, 139, 139, 0.55);
 }
 
 .challenge-actions {

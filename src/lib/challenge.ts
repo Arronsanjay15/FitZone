@@ -1,4 +1,5 @@
-import type { ChallengeState } from "../types";
+import type { ChallengeState, WorkoutType } from "../types";
+import { equipmentOptions } from "../data/exercises";
 
 /** How many days the challenge runs for. */
 export const CHALLENGE_LENGTH = 30;
@@ -7,6 +8,13 @@ export const CHALLENGE_LENGTH = 30;
 export const UNLOCK_HOURS = 24;
 export const UNLOCK_MS = UNLOCK_HOURS * 60 * 60 * 1000;
 
+/** Default workout type for a fresh challenge program. */
+export const DEFAULT_CHALLENGE_TYPE: WorkoutType = "Dumbbell";
+
+const isWorkoutType = (value: unknown): value is WorkoutType =>
+  typeof value === "string" &&
+  (equipmentOptions as readonly string[]).includes(value);
+
 /** A brand new, untouched challenge. */
 export function emptyChallenge(): ChallengeState {
   return {
@@ -14,7 +22,8 @@ export function emptyChallenge(): ChallengeState {
     unlockedDay: 1,
     streak: 0,
     lastCompletedDate: null,
-    lastCompletedAt: null
+    lastCompletedAt: null,
+    workoutType: DEFAULT_CHALLENGE_TYPE
   };
 }
 
@@ -75,6 +84,7 @@ export function completeDay(
   );
 
   return {
+    ...previous,
     completedDays,
     unlockedDay: Math.max(previous.unlockedDay, clampDay(day)),
     streak: nextStreak(previous),
@@ -142,6 +152,9 @@ export function normalizeChallenge(value: unknown): ChallengeState {
     lastCompletedAt:
       typeof raw.lastCompletedAt === "string"
         ? raw.lastCompletedAt
-        : null
+        : null,
+    workoutType: isWorkoutType(raw.workoutType)
+      ? raw.workoutType
+      : DEFAULT_CHALLENGE_TYPE
   };
 }

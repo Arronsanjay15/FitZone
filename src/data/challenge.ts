@@ -1,77 +1,161 @@
-import type { Exercise } from "../types";
-import { exercises } from "./exercises";
+import type {
+  Exercise,
+  FitnessLevel,
+  MuscleGroup,
+  WorkoutType
+} from "../types";
+import { generateWorkoutPlan } from "../lib/planner";
 
-/** One day of the 30-day challenge: a themed mini-workout. */
+/** One day of the 30-day challenge: a themed muscle-building session. */
 export type ChallengeDay = {
   day: number;
   title: string;
-  /** Short label for the day's focus, e.g. "Full Body". */
+  /** Short label for the day's focus, e.g. "Push". */
   focus: string;
+  /** Difficulty phase the day belongs to (progresses across the program). */
+  level: FitnessLevel;
+  /** Muscle groups the day targets (ignored for Kickboxing). */
+  muscleGroups: MuscleGroup[];
   exercises: Exercise[];
 };
 
-type ChallengeDaySeed = {
-  title: string;
-  focus: string;
-  exerciseIds: string[];
+/** A phase of the program where every day shares one difficulty level. */
+export type ChallengePhase = {
+  level: FitnessLevel;
+  label: string;
+  /** First day of the phase (inclusive). */
+  from: number;
+  /** Last day of the phase (inclusive). */
+  to: number;
 };
 
 /**
- * The 30-day challenge program. Each day references ids from the shared
- * exercise library so the dashboard can show the plan and launch it inside the
- * existing guided workout session.
+ * The challenge progresses through three 10-day phases, ramping the difficulty
+ * from beginner to advanced as the user builds the habit.
  */
-const challengeSeeds: ChallengeDaySeed[] = [
-  { title: "Full Body Ignition", focus: "Full Body", exerciseIds: ["bodyweight-squats", "knee-push-ups", "plank"] },
-  { title: "Upper Body Start", focus: "Upper Body", exerciseIds: ["incline-push-ups", "bicep-curls", "lateral-raises"] },
-  { title: "Lower Body & Core", focus: "Lower Body", exerciseIds: ["reverse-lunges", "glute-bridges", "crunches"] },
-  { title: "Cardio Kickstart", focus: "Cardio", exerciseIds: ["jumping-jacks", "high-knees", "plank"] },
-  { title: "Chest & Arms", focus: "Push", exerciseIds: ["dumbbell-chest-press", "hammer-curls", "triceps-kickbacks"] },
-  { title: "Back & Shoulders", focus: "Pull", exerciseIds: ["lat-pulldown", "reverse-flyes", "front-raises"] },
-  { title: "Active Recovery", focus: "Recovery", exerciseIds: ["glute-bridges", "calf-raises", "dead-bug"] },
-  { title: "Full Body Strength", focus: "Full Body", exerciseIds: ["dumbbell-squats", "push-ups", "bicep-curls"] },
-  { title: "Core Circuit", focus: "Core", exerciseIds: ["crunches", "bicycle-crunches", "plank"] },
-  { title: "Upper Body Pump", focus: "Upper Body", exerciseIds: ["dumbbell-chest-press", "shoulder-press", "hammer-curls"] },
-  { title: "Leg Builder", focus: "Lower Body", exerciseIds: ["romanian-deadlifts", "reverse-lunges", "calf-raises"] },
-  { title: "Kickboxing Cardio", focus: "Cardio", exerciseIds: ["jab-cross", "front-kick", "knee-strikes"] },
-  { title: "Push Power", focus: "Push", exerciseIds: ["wide-push-ups", "dumbbell-flyes", "triceps-extensions"] },
-  { title: "Recovery Flow", focus: "Recovery", exerciseIds: ["glute-bridges", "wall-sit", "dead-bug"] },
-  { title: "Full Body Burn", focus: "Full Body", exerciseIds: ["dumbbell-squats", "push-ups", "mountain-climbers"] },
-  { title: "Back & Biceps", focus: "Pull", exerciseIds: ["seated-cable-row", "lat-pulldown", "concentration-curls"] },
-  { title: "Core & Legs", focus: "Core", exerciseIds: ["bicycle-crunches", "reverse-lunges", "glute-bridges"] },
-  { title: "Shoulder Sculpt", focus: "Shoulders", exerciseIds: ["shoulder-press", "lateral-raises", "reverse-flyes"] },
-  { title: "Leg Day", focus: "Lower Body", exerciseIds: ["barbell-squats", "leg-press", "calf-raises"] },
-  { title: "Kickboxing Blitz", focus: "Cardio", exerciseIds: ["hooks", "uppercuts", "roundhouse-kick"] },
-  { title: "Chest & Triceps", focus: "Push", exerciseIds: ["barbell-bench-press", "dumbbell-floor-press", "triceps-kickbacks"] },
-  { title: "Active Recovery", focus: "Recovery", exerciseIds: ["glute-bridges", "calf-raises", "dead-bug"] },
-  { title: "Full Body Power", focus: "Full Body", exerciseIds: ["dumbbell-squats", "push-ups", "plank"] },
-  { title: "Pull Strength", focus: "Pull", exerciseIds: ["barbell-deadlift", "seated-cable-row", "lat-pulldown"] },
-  { title: "Core Inferno", focus: "Core", exerciseIds: ["bicycle-crunches", "leg-raises", "mountain-climbers"] },
-  { title: "Leg Endurance", focus: "Lower Body", exerciseIds: ["barbell-squats", "reverse-lunges", "wall-sit"] },
-  { title: "Shoulders & Arms", focus: "Shoulders", exerciseIds: ["arnold-press", "pike-push-ups", "hammer-curls"] },
-  { title: "Conditioning", focus: "Cardio", exerciseIds: ["burpees", "high-knees", "skaters"] },
-  { title: "Total Body Final", focus: "Full Body", exerciseIds: ["barbell-deadlift", "barbell-bench-press", "romanian-deadlifts"] },
-  { title: "Grand Finale", focus: "Push", exerciseIds: ["burpees", "diamond-push-ups", "mountain-climbers"] }
+export const challengePhases: ChallengePhase[] = [
+  { level: "Beginner", label: "Foundation", from: 1, to: 10 },
+  { level: "Intermediate", label: "Build", from: 11, to: 20 },
+  { level: "Advanced", label: "Peak", from: 21, to: 30 }
 ];
 
-const exerciseById = new Map(
-  exercises.map((exercise) => [exercise.id, exercise])
-);
+/** The difficulty level for a given challenge day (1-based). */
+export function challengeLevelForDay(day: number): FitnessLevel {
+  const phase = challengePhases.find(
+    (item) => day >= item.from && day <= item.to
+  );
 
-export const challengeDays: ChallengeDay[] = challengeSeeds.map(
-  (seed, index) => ({
-    day: index + 1,
-    title: seed.title,
-    focus: seed.focus,
-    exercises: seed.exerciseIds
-      .map((id) => exerciseById.get(id))
-      .filter((exercise): exercise is Exercise => Boolean(exercise))
-  })
-);
+  return phase?.level ?? "Beginner";
+}
 
-const dayByNumber = new Map(challengeDays.map((day) => [day.day, day]));
+/** The phase a given day belongs to. */
+export function challengePhaseForDay(day: number): ChallengePhase | undefined {
+  return challengePhases.find((item) => day >= item.from && day <= item.to);
+}
+
+/**
+ * The 30-day challenge program: a structured, muscle-building rotation. Each
+ * day defines a themed focus (its target muscle groups); the exercises
+ * themselves are generated from the user's chosen workout type at the day's
+ * phase difficulty, so the same day works for dumbbell, bodyweight, gym or
+ * kickboxing training.
+ */
+type ChallengeDaySeed = {
+  title: string;
+  focus: string;
+  muscleGroups: MuscleGroup[];
+};
+
+const challengeProgram: ChallengeDaySeed[] = [
+  // ----- Phase 1 · Foundation (Beginner, days 1–10) -----
+  { title: "Full Body Foundations", focus: "Full Body", muscleGroups: ["Chest", "Back", "Legs"] },
+  { title: "Lower Body Basics", focus: "Lower Body", muscleGroups: ["Legs", "Core"] },
+  { title: "Upper Body Basics", focus: "Upper Body", muscleGroups: ["Chest", "Back"] },
+  { title: "Core & Stability", focus: "Core", muscleGroups: ["Core", "Shoulders"] },
+  { title: "Legs & Glutes", focus: "Lower Body", muscleGroups: ["Legs"] },
+  { title: "Arms & Shoulders", focus: "Arms & Shoulders", muscleGroups: ["Arms", "Shoulders"] },
+  { title: "Chest & Back", focus: "Push & Pull", muscleGroups: ["Chest", "Back"] },
+  { title: "Full Body Strength", focus: "Full Body", muscleGroups: ["Legs", "Chest", "Back"] },
+  { title: "Core Foundations", focus: "Core", muscleGroups: ["Core"] },
+  { title: "Foundation Graduation", focus: "Full Body", muscleGroups: ["Legs", "Chest", "Back", "Shoulders"] },
+
+  // ----- Phase 2 · Build (Intermediate, days 11–20) -----
+  { title: "Upper Body Push", focus: "Push", muscleGroups: ["Chest", "Shoulders", "Arms"] },
+  { title: "Lower Body Strength", focus: "Lower Body", muscleGroups: ["Legs", "Core"] },
+  { title: "Upper Body Pull", focus: "Pull", muscleGroups: ["Back", "Arms"] },
+  { title: "Legs & Glutes II", focus: "Lower Body", muscleGroups: ["Legs"] },
+  { title: "Shoulders & Core", focus: "Shoulders & Core", muscleGroups: ["Shoulders", "Core"] },
+  { title: "Chest & Triceps", focus: "Push", muscleGroups: ["Chest", "Arms"] },
+  { title: "Back & Biceps", focus: "Pull", muscleGroups: ["Back", "Arms"] },
+  { title: "Full Body Hypertrophy", focus: "Full Body", muscleGroups: ["Legs", "Chest", "Back"] },
+  { title: "Glutes & Hamstrings", focus: "Lower Body", muscleGroups: ["Legs", "Core"] },
+  { title: "Build Peak", focus: "Full Body", muscleGroups: ["Chest", "Back", "Legs", "Shoulders"] },
+
+  // ----- Phase 3 · Peak (Advanced, days 21–30) -----
+  { title: "Advanced Push", focus: "Push", muscleGroups: ["Chest", "Shoulders", "Arms"] },
+  { title: "Advanced Pull", focus: "Pull", muscleGroups: ["Back", "Arms"] },
+  { title: "Advanced Legs", focus: "Lower Body", muscleGroups: ["Legs", "Core"] },
+  { title: "Upper Body Power", focus: "Upper Body", muscleGroups: ["Chest", "Back"] },
+  { title: "Lower Body Power", focus: "Lower Body", muscleGroups: ["Legs", "Core"] },
+  { title: "Shoulders & Arms", focus: "Arms & Shoulders", muscleGroups: ["Shoulders", "Arms"] },
+  { title: "Chest & Back Strength", focus: "Push & Pull", muscleGroups: ["Chest", "Back"] },
+  { title: "Legs & Core Finisher", focus: "Lower Body", muscleGroups: ["Legs", "Core"] },
+  { title: "Full Body Power", focus: "Full Body", muscleGroups: ["Legs", "Chest", "Back", "Shoulders"] },
+  { title: "Grand Finale", focus: "Full Body", muscleGroups: ["Legs", "Chest", "Back", "Arms", "Shoulders"] }
+];
+
+/** Stable per-(type, day) seed so a challenge day never changes between visits. */
+function seedFor(workoutType: WorkoutType, day: number): number {
+  const key = `${workoutType}:${day}`;
+  let hash = 2_166_136_261;
+
+  for (let i = 0; i < key.length; i += 1) {
+    hash ^= key.charCodeAt(i);
+    hash = Math.imul(hash, 16_777_619);
+  }
+
+  return hash >>> 0;
+}
+
+const cache = new Map<WorkoutType, ChallengeDay[]>();
+
+/**
+ * Build (and cache) the full 30-day program for a workout type. Generation is
+ * deterministic, so the returned plans are identical on every call.
+ */
+export function challengeDaysFor(workoutType: WorkoutType): ChallengeDay[] {
+  const cached = cache.get(workoutType);
+  if (cached) return cached;
+
+  const days = challengeProgram.map((seed, index) => {
+    const day = index + 1;
+    const level = challengeLevelForDay(day);
+
+    const exercises = generateWorkoutPlan({
+      level,
+      workoutType,
+      muscleGroups: seed.muscleGroups,
+      seed: seedFor(workoutType, day)
+    });
+
+    return {
+      day,
+      title: seed.title,
+      focus: seed.focus,
+      level,
+      muscleGroups: seed.muscleGroups,
+      exercises
+    };
+  });
+
+  cache.set(workoutType, days);
+  return days;
+}
 
 /** Look up a single challenge day by its 1-based number. */
-export function getChallengeDay(day: number): ChallengeDay | undefined {
-  return dayByNumber.get(day);
+export function getChallengeDay(
+  day: number,
+  workoutType: WorkoutType
+): ChallengeDay | undefined {
+  return challengeDaysFor(workoutType).find((item) => item.day === day);
 }
