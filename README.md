@@ -1,531 +1,598 @@
-<div align="center">
-
 # 🏋️ FitZone
 
-**A premium, offline-first fitness web app for planning, learning, and completing guided workouts.**
+### Plan smarter. Train better. Track your progress.
 
-Build a personalized workout plan that adapts to your fitness level, explore a curated library of **80 exercises**, follow step-by-step instructions, watch technique videos, and track your progress — all saved locally in your browser.
+FitZone is a premium, offline-first fitness web application for planning workouts, learning exercises, and completing guided training sessions.
 
-### [🚀 Live Demo → fitzonepro-zephyr.vercel.app](https://fitzonepro-zephyr.vercel.app/)
+Explore **80 exercises**, create personalized workout plans, follow step-by-step instructions, and track your progress — with data saved locally in your browser.
+
+<div align="center">
+
+### 🚀 [Live Demo — FitZone](https://fitzonepro-zephyr.vercel.app/)
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-000000?logo=vercel&logoColor=white)](https://fitzonepro-zephyr.vercel.app/)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)](https://vite.dev/)
-[![Lucide](https://img.shields.io/badge/icons-Lucide-f56565?logo=lucide&logoColor=white)](https://lucide.dev/)
-[![License](https://img.shields.io/badge/license-MIT-green)](#-license)
+[![License](https://img.shields.io/badge/License-MIT-green)](#-license)
 
 </div>
 
 ---
 
-## 📖 Table of Contents
+## 📌 Table of Contents
 
-- [Overview](#-overview)
+- [About the Project](#-about-the-project)
 - [Features](#-features)
 - [Tech Stack](#-tech-stack)
 - [Getting Started](#-getting-started)
 - [Available Scripts](#-available-scripts)
 - [Project Structure](#-project-structure)
 - [How It Works](#-how-it-works)
-- [Data Model](#-data-model)
 - [Exercise Library](#-exercise-library)
-- [Data Sources & Attribution](#-data-sources--attribution)
-- [Persistence](#-persistence)
-- [PWA & Offline](#-pwa--offline)
+- [Local Data Storage](#-local-data-storage)
+- [Progressive Web App and Offline Support](#-progressive-web-app-and-offline-support)
 - [Accessibility](#-accessibility)
 - [Customization](#-customization)
+- [Data Sources and Attribution](#-data-sources-and-attribution)
 - [License](#-license)
 
 ---
 
-## 🔎 Overview
+## 📖 About the Project
 
-FitZone is a single-page React application with **no backend and no account required**. Everything a user does — completed exercises, per-set check-offs, saved favourites, the 30-day challenge, and finished workout sessions — is persisted to `localStorage`, so the app works fully offline after the first load and keeps progress between visits.
+**FitZone** is a responsive, single-page fitness application built with React and TypeScript. It helps users create personalized workout plans, learn exercise techniques, complete guided workout sessions, and monitor their fitness progress.
 
-It is also an **installable PWA**: add it to your home screen or desktop and it launches in its own window, starts instantly from cache, and keeps working with no connection at all. See [PWA & Offline](#-pwa--offline).
+FitZone does not require an account or backend. Workout progress, favourites, set completion, workout history, and challenge progress are stored in the browser using `localStorage`.
 
-> 🔗 **Try it now:** [https://fitzonepro-zephyr.vercel.app/](https://fitzonepro-zephyr.vercel.app/) — deployed on Vercel.
+The application also supports Progressive Web App (PWA) features, allowing users to install it on supported devices and access cached resources offline.
 
-The experience is organized into five anchor-linked sections:
+**Live application:** https://fitzonepro-zephyr.vercel.app/
 
-| Section | Purpose |
-| --- | --- |
-| **Home** | Hero introduction with live stats, a focus selector, a challenge teaser, and primary calls to action. |
-| **Planner** | Generates a level-adjusted workout from your selections (2 sets / 3 exercises for beginners, up to 4 exercises for intermediate & advanced). |
-| **Dashboard** | The **30-day challenge** plus progress overview: exercises, completions, sessions, sets, and streaks. |
-| **Exercises** | Searchable, filterable library of all exercises, with saved favourites. |
-| **History** | Log of guided workout sessions you have finished. |
+### Main Sections
+
+| Section | Description |
+|---|---|
+| **Home** | Introduction, fitness statistics, workout focus, and challenge shortcuts. |
+| **Planner** | Generates personalized workout plans based on fitness level and workout type. |
+| **Dashboard** | Displays progress statistics and the 30-day workout challenge. |
+| **Exercises** | Searchable exercise library with filters and favourites. |
+| **History** | Displays completed guided workout sessions. |
 
 ---
 
 ## ✨ Features
 
-### 🎯 Personalized Workout Planner
-- Choose a **fitness level** (Beginner / Intermediate / Advanced).
-- Choose a **workout type** (Dumbbell / Bodyweight / Gym / Kickboxing).
-- Select **target muscle groups** (Chest, Back, Arms, Shoulders, Legs, Core).
-- Generates a tailored plan that **adapts to your level** (see [How It Works](#-how-it-works)):
-  - **Beginner** — **2 sets** per exercise, up to **3 exercises**, drawn from beginner movements only.
-  - **Intermediate** — **3 sets** per exercise, **4 exercises**.
-  - **Advanced** — **3 sets** per exercise, **3–4 exercises**, biased toward advanced movements for extra difficulty.
+### 🎯 1. Personalized Workout Planner
 
-### 🧭 Guided Workout Sessions
-- Full-screen step-by-step session runner with an exercise progress bar.
-- Built-in **30-second rest timer** between exercises, with skip option.
-- Complete, go back, or skip exercises, and a celebratory completion summary.
-- Finishing a session automatically logs it to your history.
+- Choose your fitness level: Beginner, Intermediate, or Advanced.
+- Select a workout type: Dumbbell, Bodyweight, Gym, or Kickboxing.
+- Select target muscle groups: Chest, Back, Arms, Shoulders, Legs, and Core.
+- Generate workout plans based on your selected fitness level.
+- Target-muscle filtering is not applied to Kickboxing workouts.
 
-### 📚 Exercise Library
-- **80 curated exercises** across four equipment categories and three difficulty levels.
-- Live **search** across names, descriptions, and muscles.
-- Filter by **equipment**, **difficulty**, and multiple **muscle groups**.
-- **Save favourites** with a heart toggle, then filter the library down to your saved exercises.
-- Responsive filter sidebar with an active-filter reset.
+| Fitness Level | Sets per Exercise | Exercises per Plan |
+|---|---:|---:|
+| Beginner | 2 | Up to 3 |
+| Intermediate | 3 | 4 |
+| Advanced | 3 | 3–4 |
 
-### 🖼️ Rich Exercise Media
-- Demonstration photos from the open **Free Exercise DB**.
-- Verified **YouTube tutorial** embeds with graceful search fallback.
-- Multi-source, resilient image loading with skeleton and icon fallbacks.
+### 🧭 2. Guided Workout Sessions
 
-### 🗓️ 30-Day Challenge
-- A structured **muscle-building program** on the Dashboard — a themed workout for every one of the 30 days.
-- **Levels ramp automatically**: days 1–10 are beginner, 11–20 intermediate, and 21–30 advanced.
-- **Choose your workout type** (Dumbbell / Bodyweight / Gym / Kickboxing) and the whole program is generated around it.
-- Each day's exercises are produced on demand from the day's focus and phase; the next day unlocks **24 hours after** you finish the current one.
-- Tracks a **day streak**, progress bar, per-day completion, and a finish celebration. See [How It Works](#-how-it-works).
+- Full-screen, step-by-step workout guidance.
+- Exercise progress indicator.
+- Built-in **30-second rest timer** between exercises.
+- Option to skip rest periods.
+- Complete, revisit, or skip exercises.
+- Workout completion summary.
+- Automatic workout history tracking.
 
-### ✅ Progress Tracking
-- Mark individual **sets** as complete per exercise.
-- Mark whole exercises as **done**.
-- Animated dashboard statistics and a persistent workout history.
+### 📚 3. Exercise Library
 
-### 💬 In-App Feedback
-- Toast notifications for successes, warnings, and info (marking done, generating plans, challenge changes, resetting data).
-- A top scroll-progress bar and a floating **Back to top** control.
+- **80 exercises** across four workout categories.
+- Three difficulty levels.
+- Search exercises by name, description, or muscle group.
+- Filter by workout type, difficulty, and muscle group.
+- Save favourite exercises.
+- View exercise descriptions, instructions, and technique tips.
 
-### 📲 Installable PWA
-- Install to the home screen / desktop — runs in a standalone window with no browser chrome.
-- An **Install** control appears in the navbar whenever the browser offers it, with Share-sheet guidance on iOS.
-- A self-hosted **service worker** caches the app shell for instant, fully offline launches.
-- Smart caching for exercise photos, tutorial thumbnails, and fonts, so previous content survives going offline.
-- In-app **update prompt** when a new version has been downloaded (see [PWA & Offline](#-pwa--offline)).
+### 🖼️ 4. Exercise Images and Videos
 
-### 🌙 Premium Dark UI
-- Refined dark theme with a single lime accent and Inter typography.
-- Smooth scrolling, hover states, and responsive layouts.
-- Fully responsive navigation with a mobile menu.
+- Exercise demonstration images from the Free Exercise DB.
+- YouTube tutorial videos.
+- YouTube search fallbacks when a specific tutorial is unavailable.
+- Image loading placeholders and fallback icons.
+
+### 🗓️ 5. 30-Day Workout Challenge
+
+- A structured workout program covering 30 days.
+- Automatically increasing difficulty:
+  - **Days 1–10:** Beginner
+  - **Days 11–20:** Intermediate
+  - **Days 21–30:** Advanced
+- Choose Dumbbell, Bodyweight, Gym, or Kickboxing workouts.
+- Daily workouts generated according to the day's focus.
+- The next day unlocks 24 hours after completing the current day.
+- Track completed days, streaks, and challenge progress.
+
+### 📈 6. Progress Tracking
+
+- Mark individual sets as complete.
+- Mark exercises as completed.
+- View dashboard progress statistics.
+- Track completed workout sessions.
+- Monitor workout streaks and challenge completion.
+- Maintain workout history between visits using browser storage.
+
+### 📲 7. Progressive Web App (PWA)
+
+- Install FitZone on supported desktop and mobile browsers.
+- Launch the application in a standalone window.
+- Cache application resources for offline access.
+- Cache supported exercise images and tutorial thumbnails.
+- Receive an update prompt when a new version becomes available.
+
+### 🌙 8. Modern Responsive UI
+
+- Premium dark interface with lime accents.
+- Inter typography.
+- Responsive navigation and mobile menu.
+- Smooth scrolling and hover effects.
+- Toast notifications.
+- Scroll progress indicator.
+- Floating back-to-top button.
 
 ---
 
-## 🛠 Tech Stack
+## 🛠️ Tech Stack
 
-| Layer | Technology |
-| --- | --- |
-| **Framework** | [React 19](https://react.dev/) (function components + hooks) |
-| **Language** | [TypeScript 6](https://www.typescriptlang.org/) |
-| **Build Tool** | [Vite 8](https://vite.dev/) |
-| **Icons** | [Lucide React](https://lucide.dev/) |
-| **PWA** | [vite-plugin-pwa](https://vite-pwa-org.netlify.app/) (Workbox) + generated icons |
-| **Styling** | Hand-written CSS with design tokens (`App.css`) |
-| **Linting** | ESLint 10 + `typescript-eslint` + React Hooks / Refresh plugins |
-| **State & Persistence** | React `useState` / `useMemo` + browser `localStorage` |
+| Category | Technology |
+|---|---|
+| Frontend Framework | React 19 |
+| Programming Language | TypeScript 6 |
+| Build Tool | Vite 8 |
+| Icons | Lucide React |
+| Styling | Custom CSS and design tokens |
+| State Management | React Hooks |
+| Local Storage | Browser `localStorage` |
+| Progressive Web App | `vite-plugin-pwa` and Workbox |
+| Code Quality | ESLint and `typescript-eslint` |
+| Deployment | Vercel |
 
-No routing library, no state-management library, and no runtime data fetching framework — the app intentionally stays lean. PWA support is generated at build time by `vite-plugin-pwa`, with icons produced from a single SVG source.
+### Why These Technologies?
+
+- **React:** Builds reusable UI components and interactive interfaces.
+- **TypeScript:** Provides static typing and improves code maintainability.
+- **Vite:** Offers fast development and optimized production builds.
+- **Lucide React:** Provides lightweight, consistent icons.
+- **localStorage:** Persists workout progress without requiring a backend.
+- **Workbox:** Supports service-worker caching for the PWA.
 
 ---
 
 ## 🚀 Getting Started
 
-### 🔴 Live Version
-
-The app is deployed and ready to use — no installation required:
-
-**👉 [https://fitzonepro-zephyr.vercel.app/](https://fitzonepro-zephyr.vercel.app/)**
-
 ### Prerequisites
 
-- **Node.js** 20.19+ or 22.12+ (required by Vite 8)
-- **npm** (or pnpm / yarn)
+Install the following tools:
+
+- **Node.js:** Version 20.19+ or 22.12+
+- **npm:** Included with Node.js
+- **Git:** Required to clone the repository
+
+Check your installed versions:
+
+```bash
+node --version
+npm --version
+git --version
+```
 
 ### Installation
 
+**Step 1: Clone the repository**
+
 ```bash
-# 1. Clone the repository
-git clone <your-repository-url>
+git clone https://github.com/Arronsanjay15/FitZone.git
+```
+
+**Step 2: Navigate to the project directory**
+
+```bash
 cd FitZone
+```
 
-# 2. Install dependencies
+**Step 3: Install dependencies**
+
+```bash
 npm install
+```
 
-# 3. Start the dev server
+**Step 4: Start the development server**
+
+```bash
 npm run dev
 ```
 
-Vite prints a local URL (typically `http://localhost:5173`). Open it in your browser.
+Vite will display a local URL, usually:
 
-### Production Build
+```text
+http://localhost:5173
+```
+
+Open the URL in your browser to use FitZone locally.
+
+> If your repository URL or folder name is different, replace the values in these commands accordingly.
+
+### Build for Production
 
 ```bash
-npm run build     # type-check + bundle into dist/
-npm run preview   # serve the production build locally
+npm run build
+```
+
+The optimized production files will be generated in the `dist/` directory.
+
+### Preview the Production Build
+
+```bash
+npm run preview
 ```
 
 ---
 
 ## 📜 Available Scripts
 
-| Script | Command | Description |
-| --- | --- | --- |
-| `dev` | `vite` | Start the development server with HMR (PWA enabled in dev). |
-| `build` | `tsc -b && vite build` | Type-check all projects, then build for production (also emits `sw.js` + `manifest.webmanifest`). |
-| `lint` | `eslint .` | Run ESLint across the codebase. |
-| `preview` | `vite preview` | Preview the production build locally (recommended for testing install/offline). |
-| `generate-pwa-assets` | `pwa-assets-generator` | Regenerate every PWA icon in `public/` from `public/favicon.svg`. |
+| Command | Description |
+|---|---|
+| `npm run dev` | Starts the development server with hot module replacement. |
+| `npm run build` | Type-checks the TypeScript projects and creates a production build. |
+| `npm run lint` | Runs ESLint to check the codebase. |
+| `npm run preview` | Serves the production build locally. |
+| `npm run generate-pwa-assets` | Regenerates PWA icons from `public/favicon.svg`. |
 
 ---
 
-## 🗂 Project Structure
+## 🗂️ Project Structure
 
 ```text
 FitZone/
-├─ public/
-│  ├─ favicon.svg              # Brand mark — also the PWA icon source
-│  ├─ favicon.ico              # Generated (small sizes)
-│  ├─ pwa-64x64.png            # Generated
-│  ├─ pwa-192x192.png          # Generated
-│  ├─ pwa-512x512.png          # Generated
-│  ├─ maskable-icon-512x512.png # Generated (Android adaptive icon)
-│  ├─ apple-touch-icon-180x180.png # Generated (iOS home screen)
-│  └─ icons.svg                # Shared public icon sprite
-├─ src/
-│  ├─ assets/                  # Static images and starter SVGs
-│  ├─ components/              # UI components (presentational + shell)
-│  │  ├─ AnimatedNumber.tsx    # Count-up number animation
-│  │  ├─ BackToTop.tsx         # Floating scroll-to-top control
-│  │  ├─ Dashboard.tsx         # 30-day challenge + progress statistics
-│  │  ├─ EmptyState.tsx        # Reusable empty-state block
-│  │  ├─ ExerciseCard.tsx      # Library/plan exercise card (+ favourite toggle)
-│  │  ├─ ExerciseDetailModal.tsx # Full exercise details dialog
-│  │  ├─ ExerciseFilters.tsx   # Search + equipment/level/muscle/saved filters
-│  │  ├─ ExerciseLibrary.tsx   # Library section + layout
-│  │  ├─ ExerciseMedia.tsx     # Resilient image/thumbnail component
-│  │  ├─ ExerciseThumb.tsx     # Compact media + name row (plan/challenge lists)
-│  │  ├─ Hero.tsx              # Landing hero, focus selector + challenge teaser
-│  │  ├─ Modal.tsx             # Accessible modal shell
-│  │  ├─ Navbar.tsx            # Sticky nav + mobile menu + install control
-│  │  ├─ Planner.tsx           # Workout planner form + results
-│  │  ├─ ProgressBar.tsx       # Accessible progress bar
-│  │  ├─ PwaManager.tsx        # Service-worker registration + update prompt
-│  │  ├─ Reveal.tsx            # Scroll-reveal animation wrapper
-│  │  ├─ ScrollProgress.tsx    # Top-of-page scroll indicator
-│  │  ├─ SectionHeading.tsx    # Shared section heading
-│  │  ├─ Select.tsx            # Custom accessible dropdown
-│  │  ├─ ToastProvider.tsx     # Toast queue provider
-│  │  ├─ VideoModal.tsx        # YouTube tutorial modal
-│  │  ├─ WorkoutHistory.tsx    # Saved sessions list
-│  │  └─ WorkoutSession.tsx    # Guided session runner
-│  ├─ data/
-│  │  ├─ challenge.ts          # 30-day muscle-building program + day generator
-│  │  └─ exercises.ts          # The full 80-exercise dataset + lookups
-│  ├─ hooks/
-│  │  ├─ useExerciseImage.ts   # Image-candidate resolver for a card
-│  │  ├─ useInView.ts          # One-shot intersection observer
-│  │  ├─ useInstallPrompt.ts   # Captures the browser install prompt
-│  │  ├─ useScrollProgress.ts  # Page scroll progress + offset
-│  │  ├─ useScrollSpy.ts       # Active-section tracking for the navbar
-│  │  └─ useToast.ts           # Access the toast queue
-│  ├─ lib/
-│  │  ├─ challenge.ts          # Challenge progress, streak + unlock logic
-│  │  ├─ icons.ts              # Equipment / level / exercise icon maps
-│  │  ├─ images.ts             # Free Exercise DB image URL resolver
-│  │  ├─ planner.ts            # Level-aware workout plan generation
-│  │  ├─ storage.ts            # Typed localStorage helpers
-│  │  ├─ toast.ts              # Toast types + reducer
-│  │  └─ video.ts              # YouTube URL + thumbnail resolver
-│  ├─ App.css                  # All component styling + design tokens
-│  ├─ App.tsx                  # Application root: state + orchestration
-│  ├─ index.css                # Base document styles + font import
-│  ├─ main.tsx                 # React entry point (wraps app in ToastProvider)
-│  └─ types.ts                 # Shared domain types
-├─ .gitignore
-├─ eslint.config.js            # Flat ESLint configuration
-├─ index.html                  # HTML entry point (+ PWA meta/links)
-├─ package.json                # Dependencies + scripts
-├─ pwa-assets.config.ts        # PWA icon generation config
-├─ tsconfig.json               # Root TS project references
-├─ tsconfig.app.json           # App TS config
-├─ tsconfig.node.json          # Build-tooling TS config
-└─ vite.config.ts              # Vite + PWA (manifest, Workbox) configuration
+├── public/
+│   ├── favicon.svg
+│   ├── favicon.ico
+│   ├── pwa-64x64.png
+│   ├── pwa-192x192.png
+│   ├── pwa-512x512.png
+│   ├── maskable-icon-512x512.png
+│   ├── apple-touch-icon-180x180.png
+│   └── icons.svg
+│
+├── src/
+│   ├── assets/                   # Static assets
+│   │
+│   ├── components/               # Reusable UI components
+│   │   ├── AnimatedNumber.tsx
+│   │   ├── BackToTop.tsx
+│   │   ├── Dashboard.tsx
+│   │   ├── EmptyState.tsx
+│   │   ├── ExerciseCard.tsx
+│   │   ├── ExerciseDetailModal.tsx
+│   │   ├── ExerciseFilters.tsx
+│   │   ├── ExerciseLibrary.tsx
+│   │   ├── ExerciseMedia.tsx
+│   │   ├── ExerciseThumb.tsx
+│   │   ├── Hero.tsx
+│   │   ├── Modal.tsx
+│   │   ├── Navbar.tsx
+│   │   ├── Planner.tsx
+│   │   ├── ProgressBar.tsx
+│   │   ├── PwaManager.tsx
+│   │   ├── Reveal.tsx
+│   │   ├── ScrollProgress.tsx
+│   │   ├── SectionHeading.tsx
+│   │   ├── Select.tsx
+│   │   ├── ToastProvider.tsx
+│   │   ├── VideoModal.tsx
+│   │   ├── WorkoutHistory.tsx
+│   │   └── WorkoutSession.tsx
+│   │
+│   ├── data/
+│   │   ├── challenge.ts           # 30-day challenge data
+│   │   └── exercises.ts           # Exercise dataset
+│   │
+│   ├── hooks/                     # Reusable React hooks
+│   │
+│   ├── lib/
+│   │   ├── challenge.ts            # Challenge progress and unlock logic
+│   │   ├── icons.ts                # Icon mappings
+│   │   ├── images.ts               # Exercise image resolver
+│   │   ├── planner.ts              # Workout plan generation
+│   │   ├── storage.ts              # localStorage helpers
+│   │   ├── toast.ts                # Toast notification logic
+│   │   └── video.ts                # Video and thumbnail helpers
+│   │
+│   ├── App.css                     # Application styling
+│   ├── App.tsx                     # Main application component
+│   ├── index.css                   # Global styles
+│   ├── main.tsx                    # Application entry point
+│   └── types.ts                    # Shared TypeScript types
+│
+├── .gitignore
+├── eslint.config.js
+├── index.html
+├── package.json
+├── package-lock.json
+├── pwa-assets.config.ts
+├── tsconfig.json
+├── tsconfig.app.json
+├── tsconfig.node.json
+└── vite.config.ts
 ```
 
 ---
 
 ## ⚙️ How It Works
 
-### Application State (root)
+### Application State
 
-`src/App.tsx` is the single source of truth. It owns all application state with `useState` and derives filtered data with `useMemo`, passing values down as props:
+`src/App.tsx` coordinates the main application state and passes the necessary data and callbacks to child components.
 
-- **Library filters** — `category`, `levelFilter`, `search`, `selectedMuscles`, `savedOnly`
-- **Persisted progress** — `completedExercises`, `setChecks`, `workoutHistory`, `favorites`, `challenge`
-- **Planner** — `plannerLevel`, `selectedWorkoutType`, `plan`
-- **Modals** — `selectedExercise`, `activeVideo`
-- **Guided session** — `session`, `sessionIndex`, `sessionOpen`, `resting`, `restSeconds`, `sessionFinished`
+The main state areas include:
 
-Five `useEffect` hooks sync progress state back to `localStorage` (one per key); additional effects advance the challenge's 24-hour unlock timer and drive the guided-session rest countdown.
+- **Exercise library:** Category, difficulty, search query, selected muscle groups, and favourites filter.
+- **Progress tracking:** Completed exercises, set checks, workout history, and favourites.
+- **Workout planner:** Selected fitness level, workout type, and generated workout plan.
+- **Challenge:** Completed days, streak, unlock timing, and workout type.
+- **Modals:** Selected exercise and active video.
+- **Guided sessions:** Current exercise, rest timer, session progress, and completion status.
 
-### The Planning Algorithm
+React hooks manage the interface, while `localStorage` saves relevant progress between visits.
 
-`generatePlan()` (backed by `generateWorkoutPlan()` in `src/lib/planner.ts`) builds a balanced, level-aware plan:
+### Workout Plan Generation
 
-1. **Filter** the library to exercises at or below the selected difficulty level whose equipment matches the chosen workout type. Target-muscle filtering applies to every type **except Kickboxing**.
-2. **Pick a plan size for the level** — the rules live in `planRules`:
+The workout planner uses `generateWorkoutPlan()` from `src/lib/planner.ts`.
 
-   | Level | Sets per exercise | Exercises |
-   | --- | ---: | --- |
-   | Beginner | 2 | 3 (max) |
-   | Intermediate | 3 | 4 |
-   | Advanced | 3 | 3–4 |
+The process works as follows:
 
-3. **Shuffle** the eligible exercises.
-4. **Select** exercises with a greedy, coverage-maximizing loop:
-   - Prefer exercises that introduce **new muscle groups** (`score += newMuscles`).
-   - Bonus-weight exercises that cover your explicitly **selected target muscles** (`score += uncoveredSelected * 2`).
-   - Add a **difficulty nudge** toward your own level (`score += 3`) so a higher level actually feels harder.
-   - Break ties randomly for variety.
-5. **Backfill** — if the targeted muscle groups are too narrow for the level (for example a beginner *Gym* core session), the plan is topped up with other exercises from the same workout type and level, so a full session is always produced instead of an empty or short one.
-6. **Adjust the sets** of every chosen exercise to the level's set count (e.g. beginners get 2 sets even if the library default is 3).
+1. Filter exercises by workout type and selected difficulty.
+2. Apply target muscle-group preferences, except for Kickboxing.
+3. Determine the number of exercises and sets based on fitness level.
+4. Prioritize exercises that cover new muscle groups and selected targets.
+5. Add eligible exercises if necessary to complete the plan.
+6. Adjust set counts according to the selected fitness level.
 
-This keeps plans varied between generations while matching both your goals and your fitness level.
+This approach helps create varied workout plans that align with the user's selected preferences.
 
-### The 30-Day Challenge
+### 30-Day Challenge Generation
 
-The Dashboard challenge is a structured **muscle-building program** rather than a fixed list of workouts. It is defined by a 30-day schedule in `src/data/challenge.ts` where each day has a themed focus (push, pull, legs, core, full body…) and a difficulty phase:
+The challenge is defined in `src/data/challenge.ts`.
 
-| Phase | Days | Level |
-| --- | --- | --- |
-| Foundation | 1–10 | Beginner |
-| Build | 11–20 | Intermediate |
-| Peak | 21–30 | Advanced |
+- Each day has a theme or target focus.
+- Workout difficulty increases through three phases.
+- Daily workouts are generated using the workout planner.
+- The selected workout type is saved in challenge state.
+- Plans are generated consistently for a given workout type and day.
+- The next day unlocks 24 hours after the previous day's completion.
 
-Each day's exercises are **generated on demand** from the day's focus and phase level using the same `generateWorkoutPlan()` engine, so the difficulty genuinely ramps up as the user progresses.
+### Exercise Media Handling
 
-- **Workout type selection** — a selector on the challenge card lets the user build the whole program around Dumbbell, Bodyweight, Gym or Kickboxing training. The choice is persisted in `ChallengeState.workoutType`.
-- **Deterministic plans** — generation is seeded per `(workoutType, day)`, so a given day always yields the same workout and never reshuffles between visits.
-- **24-hour cadence** — days unlock 24 hours after the previous completion, and the program keeps the chosen focus from hammering the same muscles two days running.
+The application attempts to load exercise images and supported video thumbnails.
 
-### Resilient Media Loading
+If an image fails to load, another candidate can be tried. If all candidates fail, a fallback icon is displayed instead of leaving the exercise card blank.
 
-`ExerciseMedia` builds an ordered list of candidate image URLs — curated Free Exercise DB photos first, then verified YouTube thumbnails — and walks the list on any load error. While loading it shows a skeleton; if every candidate fails, it falls back to a per-exercise Lucide icon. A card can therefore never render blank or crash due to a broken image.
+### Guided Workout Flow
 
-### Guided Session Flow
-
+```text
+Start Workout
+      |
+      v
+Complete or Skip Exercise
+      |
+      v
+30-Second Rest (Optional)
+      |
+      v
+Move to Next Exercise
+      |
+      v
+Finish Workout
+      |
+      v
+Save History and Progress
 ```
-startWorkout() → exercise 1 → Complete → [30s rest] → exercise 2 → … → finishSession()
-                                                                              │
-                                                        saves history + completed exercises
-```
-
----
-
-## 🧬 Data Model
-
-Defined in `src/types.ts`:
-
-```ts
-type Equipment    = "Dumbbell" | "Bodyweight" | "Kickboxing" | "Gym";
-type Category     = "All" | Equipment;
-type MuscleGroup  = "Chest" | "Back" | "Arms" | "Shoulders" | "Legs" | "Core";
-type FitnessLevel = "Beginner" | "Intermediate" | "Advanced";
-type LevelFilter  = "All" | FitnessLevel;
-type WorkoutType  = Equipment;   // planner + hero focus + challenge
-
-type Exercise = {
-  id: string;
-  name: string;
-  category: Equipment;
-  level: FitnessLevel;
-  sets: number;
-  reps: string;
-  description: string;
-  muscles: string;
-  muscleGroups: MuscleGroup[];
-  instructions: string[];
-  tips: string[];
-  videoId?: string;      // verified YouTube tutorial id
-};
-
-type WorkoutHistoryEntry = {
-  id: string;
-  completedAt: string;   // ISO timestamp
-  exerciseNames: string[];
-  totalExercises: number;
-};
-
-type SetChecks = Record<string, boolean[]>;   // exerciseId → per-set flags
-
-type ChallengeState = {
-  completedDays: number[];
-  unlockedDay: number;
-  streak: number;
-  lastCompletedDate: string | null;
-  lastCompletedAt: string | null;
-  workoutType: WorkoutType;   // the program is built around this type
-};
-
-type ChallengeSummary = {
-  day: number;
-  length: number;
-  title: string;
-  finished: boolean;
-  nextUnlockAt: number | null;
-};
-```
-
-Each `Exercise` also carries a **description**, ordered **step-by-step instructions**, and safety/technique **tips** surfaced in the detail and session views.
 
 ---
 
 ## 🏆 Exercise Library
 
-The library contains **80 exercises**, split across equipment categories and difficulty levels:
+FitZone includes **80 exercises** across four workout categories and three difficulty levels.
 
-**By equipment**
+### Exercises by Workout Type
 
-| Category | Count |
-| --- | ---: |
+| Workout Type | Number of Exercises |
+|---|---:|
 | Bodyweight | 31 |
 | Dumbbell | 23 |
 | Gym | 15 |
 | Kickboxing | 11 |
+| **Total** | **80** |
 
-**By difficulty**
+### Exercises by Difficulty
 
-| Level | Count |
-| --- | ---: |
+| Fitness Level | Number of Exercises |
+|---|---:|
 | Beginner | 34 |
 | Intermediate | 31 |
 | Advanced | 15 |
+| **Total** | **80** |
 
-Exercises span all six muscle groups (Chest, Back, Arms, Shoulders, Legs, Core) and cover strength, core, cardio, and martial-arts conditioning.
+The exercise library covers six muscle groups:
 
----
+- Chest
+- Back
+- Arms
+- Shoulders
+- Legs
+- Core
 
-## 🔗 Data Sources & Attribution
-
-FitZone pulls in open external resources for media, with safe fallbacks everywhere:
-
-- **Demonstration photos** — [Free Exercise DB](https://github.com/yuhonas/free-exercise-db) (Unlicense / public domain), mirrored via `cdn.jsdelivr.net` and `raw.githubusercontent.com`.
-- **Tutorial videos** — YouTube. Verified `videoId`s are embedded through `youtube-nocookie.com`; every exercise also has a generated YouTube search fallback so the feature always works.
-- **Thumbnails** — YouTube image hosts (`i.ytimg.com`, `img.youtube.com`).
-
-> Exercises not covered by the dataset (e.g. burpees, high knees, kickboxing drills) gracefully fall back to their tutorial thumbnail or an icon.
+It includes strength training, core exercises, cardio movements, and martial-arts conditioning.
 
 ---
 
-## 💾 Persistence
+## 💾 Local Data Storage
 
-Progress is stored in `localStorage` under five keys (see `src/lib/storage.ts`):
+FitZone uses the browser's `localStorage` to save workout progress.
 
-| Key | Contents |
-| --- | --- |
-| `fitzone-completed` | Array of completed exercise ids |
-| `fitzone-set-checks` | Map of exercise id → per-set completion flags |
-| `fitzone-history` | Array of finished workout sessions |
-| `fitzone-favorites` | Array of saved ("favourite") exercise ids |
-| `fitzone-challenge` | 30-day challenge state (days, streak, unlock timer, workout type) |
+| Storage Key | Information Stored |
+|---|---|
+| `fitzone-completed` | Completed exercise IDs |
+| `fitzone-set-checks` | Set completion status for each exercise |
+| `fitzone-history` | Completed workout sessions |
+| `fitzone-favorites` | Favourite exercise IDs |
+| `fitzone-challenge` | Challenge progress, streak, unlock timing, and workout type |
 
-Storage access is wrapped in `try/catch`, so private-browsing modes or quota errors degrade gracefully — progress simply won't persist, and the app keeps working.
+### Important Notes
+
+- Data is stored locally in the browser.
+- Progress is not automatically synchronized between devices.
+- Clearing browser data may remove saved progress.
+- If browser storage is unavailable, the application may continue working without saving progress persistently.
 
 ---
 
-## 📲 PWA & Offline
+## 📲 Progressive Web App and Offline Support
 
-FitZone ships as a full Progressive Web App, generated at build time by [`vite-plugin-pwa`](https://vite-pwa-org.netlify.app/) on top of [Workbox](https://developer.chrome.com/docs/workbox).
+FitZone uses [`vite-plugin-pwa`](https://vite-pwa-org.netlify.app/) and [Workbox](https://developer.chrome.com/docs/workbox/) for Progressive Web App functionality.
 
-### The building blocks
+### PWA Components
 
-| Piece | Source | Purpose |
-| --- | --- | --- |
-| **Web app manifest** | `vite.config.ts` → `manifest` | Name, icons, colours, `standalone` display, and app shortcuts. |
-| **Service worker** | generated at build (`dist/sw.js`) | Precaches the app shell and applies runtime caching. |
-| **Icons** | `public/favicon.svg` → `pwa-assets.config.ts` | One brand source generates every size, incl. maskable + Apple variants. |
-| **Install control** | `src/hooks/useInstallPrompt.ts` + `Navbar.tsx` | Captures `beforeinstallprompt` and offers an in-app **Install** button. |
-| **Update prompt** | `src/components/PwaManager.tsx` | Registers the worker and offers a **Reload** when a new build is ready. |
+| Component | Purpose |
+|---|---|
+| Web app manifest | Defines the application name, icons, colours, and display mode. |
+| Service worker | Caches the application shell and applies caching rules. |
+| PWA icons | Generated from `public/favicon.svg`. |
+| Install control | Offers installation when supported by the browser. |
+| Update prompt | Allows users to reload when a new version is available. |
 
-### What gets cached
+### Cached Resources
 
-- **App shell** (HTML, JS, CSS, fonts, icons) — precached on install, so the app opens instantly and works with no network.
-- **Exercise photos** (`cdn.jsdelivr.net`, `raw.githubusercontent.com`) — `CacheFirst`, so exercises you've viewed keep their imagery offline.
-- **Tutorial thumbnails** (`i.ytimg.com`, `img.youtube.com`) — `StaleWhileRevalidate`.
-- **Google Fonts** (stylesheet + font files) — `StaleWhileRevalidate` / `CacheFirst`.
-- **YouTube player** — left entirely to the network; the embed is its own browsing context, so the app shell never competes with it.
+- Application HTML, JavaScript, and CSS.
+- Supported fonts and icons.
+- Previously requested exercise images.
+- Supported YouTube video thumbnails.
 
-### Installing
+**Note:** YouTube video playback requires an internet connection. Offline access to external media depends on whether the relevant resources have been cached.
 
-- **Android / desktop Chrome & Edge** — tap the **Install** button in the navbar (or the browser's own install icon).
-- **iOS Safari** — there is no install API, so the navbar button shows a hint: tap **Share → Add to Home Screen**.
-- **Already installed?** — the button disappears and the app launches in its own standalone window.
+### Install FitZone
 
-### Releasing updates
+**Android and desktop Chrome or Edge**
 
-The service worker is registered with `registerType: "prompt"`, so a new version downloads quietly in the background and waits. `PwaManager` surfaces an **Update available** prompt, and only when the visitor taps **Reload** does the new worker take over — nobody is interrupted mid-workout.
+Use the browser's Install option or the FitZone Install control when available.
 
-> 💡 **Testing locally:** run `npm run build` then `npm run preview`, open the preview URL, and inspect install/offline from DevTools → **Application** → *Service Workers* / *Manifest*. `npm run dev` enables the PWA as well, but a production build is the closest match to a real deployment.
+**iPhone and iPad**
 
-### Regenerating the icons
+1. Open FitZone in Safari.
+2. Tap the Share button.
+3. Select **Add to Home Screen**.
 
-Every icon is derived from the single brand mark at `public/favicon.svg`:
+### Test Offline Support
+
+Build and preview the production application:
+
+```bash
+npm run build
+npm run preview
+```
+
+Open the preview URL and inspect:
+
+**Developer Tools → Application → Service Workers / Manifest**
+
+Test offline behavior after the application has loaded and its resources have been cached.
+
+### Regenerate PWA Icons
 
 ```bash
 npm run generate-pwa-assets
 ```
 
-Adjust padding or the maskable / Apple background colours in `pwa-assets.config.ts`.
+PWA icon settings are configured in `pwa-assets.config.ts`.
 
 ---
 
 ## ♿ Accessibility
 
-- Semantic landmarks (`header`, `nav`, `main`, `footer`, `section`).
-- Modals use `role="dialog"`, `aria-modal`, `aria-labelledby`, lock background scroll, trap initial focus on the close button, and close on **Escape** or backdrop click.
-- Toggle buttons expose state via `aria-pressed` / `aria-expanded`.
-- Toast notifications are announced through a `role="status"` / `aria-live="polite"` region.
-- Icon-only controls provide `aria-label`s, and decorative icons use `aria-hidden`.
-- Visible focus states and a responsive, keyboard-friendly mobile menu.
+FitZone includes accessibility-focused features such as:
+
+- Semantic HTML landmarks and sections.
+- Accessible labels and dialog roles for modals.
+- Keyboard-friendly controls and visible focus states.
+- Escape-key and backdrop handling for dialogs.
+- Accessible state attributes for toggle controls.
+- Live regions for toast notifications.
+- Labels for icon-only buttons.
+- Responsive navigation and mobile menu controls.
 
 ---
 
 ## 🎨 Customization
 
-**Theme & design tokens** live at the top of `src/App.css` in `:root` — colors (`--accent`, `--bg`, `--surface`), radii, shadows, and `--maxw`. Change them once to re-skin the entire app.
+### Change the Theme
 
-> The PWA surface colour is duplicated as `THEME_COLOR` in `vite.config.ts` and as `<meta name="theme-color">` in `index.html`; if you change `--bg`, update those two as well.
+Design tokens such as colours, radii, shadows, and content width are defined near the top of `src/App.css`.
 
-**Adding an exercise** — append an entry to the `exercises` array in `src/data/exercises.ts`. To give it custom imagery/icons, also add it to:
+If you change the primary background colour, review the theme colour in:
 
-- `src/lib/icons.ts` → `exerciseIcons`
-- `src/lib/images.ts` → `datasetFolders`
+- `vite.config.ts`
+- `index.html`
 
-**Adding a workout type** — extend the `Equipment` union (which `WorkoutType` aliases) in `src/types.ts`, then register the new type in the option lists that drive the UI:
+Keep the PWA theme colour consistent with the application's visual design.
 
-- `equipmentOptions` and `equipmentLabels` in `src/data/exercises.ts`
-- `equipmentIcons` in `src/lib/icons.ts`
-- the `workoutTypes` array in `src/components/Planner.tsx`
-- the `challengeTypes` array in `src/components/Dashboard.tsx`
-- the `focusOptions` array in `src/components/Hero.tsx`
+### Add a New Exercise
+
+1. Add the exercise to the `exercises` array in `src/data/exercises.ts`.
+2. Add an icon mapping in `src/lib/icons.ts` if a custom icon is required.
+3. Add an image mapping in `src/lib/images.ts` if the exercise needs a custom image source.
+
+### Add a New Workout Type
+
+Update the `Equipment` type in `src/types.ts`, then review the option lists and mappings used by:
+
+- `src/data/exercises.ts`
+- `src/lib/icons.ts`
+- `src/components/Planner.tsx`
+- `src/components/Dashboard.tsx`
+- `src/components/Hero.tsx`
+
+Ensure the new workout type is supported throughout the planner, exercise library, and challenge.
+
+---
+
+## 🔗 Data Sources and Attribution
+
+FitZone uses external resources for exercise imagery and tutorials.
+
+- **Exercise demonstration images:** [Free Exercise DB](https://github.com/yuhonas/free-exercise-db), distributed under the Unlicense/public-domain terms described by that project.
+- **Tutorial videos:** YouTube, with privacy-enhanced `youtube-nocookie.com` embeds where supported.
+- **Video thumbnails:** YouTube image hosts, including `i.ytimg.com` and `img.youtube.com`.
+
+When an exercise does not have a matching dataset image, the application falls back to an alternative thumbnail or an exercise icon.
+
+External media remains subject to the terms and availability of its respective providers.
 
 ---
 
 ## 📄 License
 
-This project is released under the **MIT License**. Exercise media is used under the terms of its respective sources (see [Data Sources & Attribution](#-data-sources--attribution)).
+FitZone is released under the **MIT License**.
+
+External exercise images and other media remain subject to the terms of their respective sources.
 
 ---
 
 <div align="center">
 
-**Build your routine. Track your progress. Keep moving.** 💪
+### 💪 Build your routine. Track your progress. Keep moving.
+
+**[Try FitZone Live](https://fitzonepro-zephyr.vercel.app/)**
 
 </div>
